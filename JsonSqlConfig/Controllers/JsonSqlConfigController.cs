@@ -1,3 +1,4 @@
+using JsonSqlConfig.Experiments;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JsonSqlConfig.Controllers
@@ -8,16 +9,21 @@ namespace JsonSqlConfig.Controllers
     public class JsonSqlConfigController : ControllerBase
     {
         private readonly ILogger<JsonSqlConfigController> _logger;
+        private readonly IJsonParser _jsonParser;
 
-        public JsonSqlConfigController(ILogger<JsonSqlConfigController> logger)
+        public JsonSqlConfigController(
+            ILogger<JsonSqlConfigController> logger,
+            IJsonParser jsonParser)
         {
             _logger = logger;
+            _jsonParser = jsonParser;
         }
 
-        [HttpPost("{path}")]
-        public IActionResult PostConfig([FromBody]string json, string path)
+        [HttpPost("{json}")]
+        public ActionResult<string> PostConfig(string json)
         {
-            return Ok();
+            var parseResult = _jsonParser.Store(json);
+            return Ok(parseResult);
         }
     }
 }

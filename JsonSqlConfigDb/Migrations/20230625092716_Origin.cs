@@ -14,15 +14,15 @@ namespace JsonSqlConfigDb.Migrations
                 name: "JsonSqlConfig");
 
             migrationBuilder.CreateTable(
-                name: "JsonUnit",
+                name: "JsonUnits",
                 schema: "JsonSqlConfig",
                 columns: table => new
                 {
                     JsonUnitId = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     IsInactive = table.Column<bool>(type: "bit", nullable: false),
-                    ValueType = table.Column<int>(type: "int", nullable: false),
-                    ChildType = table.Column<int>(type: "int", nullable: false),
+                    SimpleType = table.Column<int>(type: "int", nullable: false),
+                    CompositeType = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
                     Index = table.Column<int>(type: "int", nullable: true),
                     Path = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: true),
@@ -31,19 +31,19 @@ namespace JsonSqlConfigDb.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_JsonUnit", x => x.JsonUnitId);
+                    table.PrimaryKey("PK_JsonUnits", x => x.JsonUnitId);
                     table.ForeignKey(
-                        name: "FK_JsonUnit_JsonUnit_ParentId",
+                        name: "FK_JsonUnits_JsonUnits_ParentId",
                         column: x => x.ParentId,
                         principalSchema: "JsonSqlConfig",
-                        principalTable: "JsonUnit",
+                        principalTable: "JsonUnits",
                         principalColumn: "JsonUnitId");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_JsonUnit_ParentId",
+                name: "IX_JsonUnits_ParentId",
                 schema: "JsonSqlConfig",
-                table: "JsonUnit",
+                table: "JsonUnits",
                 column: "ParentId");
         }
 
@@ -51,7 +51,7 @@ namespace JsonSqlConfigDb.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "JsonUnit",
+                name: "JsonUnits",
                 schema: "JsonSqlConfig");
         }
     }

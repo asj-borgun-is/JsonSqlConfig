@@ -9,8 +9,8 @@
 
         public long JsonUnitId { get; set; }
         public bool IsInactive { get; set; }
-        public JsonUnitValueType ValueType { get; set; }
-        public JsonUnitChildType ChildType { get; set; }
+        public JsonUnitSimpleType SimpleType { get; set; }
+        public JsonUnitCompositeType CompositeType { get; set; }
         public string Name { get; set; }
         public int? Index { get; set; }
         public string Path { get; set; }
@@ -20,7 +20,7 @@
         public long? ParentId { get; set; }
     }
 
-    public enum JsonUnitValueType
+    public enum JsonUnitSimpleType
     {
         None = 0,
         String = 1,
@@ -29,7 +29,7 @@
         Null = 4
     }
 
-    public enum JsonUnitChildType
+    public enum JsonUnitCompositeType
     {
         None = 0,
         Object = 1,

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JsonSqlConfigDb.Migrations
 {
     [DbContext(typeof(JsonSqlConfigContext))]
-    [Migration("20230624121817_Origin")]
+    [Migration("20230625092716_Origin")]
     partial class Origin
     {
         /// <inheritdoc />
@@ -33,7 +33,7 @@ namespace JsonSqlConfigDb.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("JsonUnitId"));
 
-                    b.Property<int>("ChildType")
+                    b.Property<int>("CompositeType")
                         .HasColumnType("int");
 
                     b.Property<int?>("Index")
@@ -53,18 +53,18 @@ namespace JsonSqlConfigDb.Migrations
                         .HasMaxLength(512)
                         .HasColumnType("nvarchar(512)");
 
+                    b.Property<int>("SimpleType")
+                        .HasColumnType("int");
+
                     b.Property<string>("Value")
                         .HasMaxLength(2048)
                         .HasColumnType("nvarchar(2048)");
-
-                    b.Property<int>("ValueType")
-                        .HasColumnType("int");
 
                     b.HasKey("JsonUnitId");
 
                     b.HasIndex("ParentId");
 
-                    b.ToTable("JsonUnit", "JsonSqlConfig");
+                    b.ToTable("JsonUnits", "JsonSqlConfig");
                 });
 
             modelBuilder.Entity("JsonSqlConfigDb.Model.JsonUnit", b =>

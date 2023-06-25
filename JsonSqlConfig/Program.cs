@@ -1,4 +1,5 @@
 
+using JsonSqlConfig.Experiments;
 using JsonSqlConfig.Settings;
 using JsonSqlConfigDb;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +38,8 @@ namespace JsonSqlConfig
                 //.LogTo(m => Console.WriteLine(m), new[] { DbLoggerCategory.Database.Command.Name }, LogLevel.Information)
                 .EnableSensitiveDataLogging(true)
                 );
+
+            services.AddScoped<IJsonParser, JsonParser>();
         }
 
         public static void Configure(WebApplication app)
