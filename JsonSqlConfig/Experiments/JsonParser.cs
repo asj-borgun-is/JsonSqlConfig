@@ -2,6 +2,7 @@
 using System.Text;
 using JsonSqlConfigDb.Model;
 using JsonSqlConfigDb;
+using System.Globalization;
 
 namespace JsonSqlConfig.Experiments
 {
@@ -118,27 +119,27 @@ namespace JsonSqlConfig.Experiments
             if (element.ValueKind == JsonValueKind.String)
             {
                 unit.SimpleType = JsonUnitSimpleType.String;
-                unit.Value = element.GetRawText();
+                unit.Value = element.GetString();
             }
             else if (element.ValueKind == JsonValueKind.Number)
             {
                 unit.SimpleType = JsonUnitSimpleType.Number;
-                unit.Value = element.GetRawText();
+                unit.Value = element.GetDecimal().ToString(NumberFormatInfo.InvariantInfo);
             }
             else if (element.ValueKind == JsonValueKind.True || element.ValueKind == JsonValueKind.False)
             {
                 unit.SimpleType = JsonUnitSimpleType.Boolean;
-                unit.Value = element.GetRawText();
+                unit.Value = element.ValueKind.ToString();
             }
             else if (element.ValueKind == JsonValueKind.Null)
             {
                 unit.SimpleType = JsonUnitSimpleType.Null;
-                unit.Value = element.GetRawText();
+                unit.Value = element.ValueKind.ToString();
             }
 
             string displayValue = string.Empty;
             if (element.ValueKind == JsonValueKind.String) displayValue = $"'{element.GetString()}'";
-            else if (element.ValueKind == JsonValueKind.Number) displayValue = element.GetString();
+            else if (element.ValueKind == JsonValueKind.Number) displayValue = element.GetDecimal().ToString(NumberFormatInfo.InvariantInfo);
             else displayValue = element.ValueKind.ToString();
 
             return displayValue;
