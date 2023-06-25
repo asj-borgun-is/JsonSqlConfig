@@ -1,5 +1,6 @@
 using JsonSqlConfig.Experiments;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace JsonSqlConfig.Controllers
 {
@@ -19,11 +20,12 @@ namespace JsonSqlConfig.Controllers
             _jsonParser = jsonParser;
         }
 
-        [HttpPost("{json}")]
-        public ActionResult<string> PostConfig(string json)
+        [HttpPost]
+        public ActionResult<string> PostConfig([FromBody]object jsonElement)
         {
-            var parseResult = _jsonParser.Store(json);
-            return Ok(parseResult);
+            var jdoc = (JsonElement)jsonElement;
+            var parseResult = _jsonParser.Store(jdoc);
+            return parseResult;
         }
     }
 }

@@ -21,11 +21,15 @@ namespace JsonSqlConfig.Experiments
         public string Store(string jsonString)
         {
             using var jdoc = JsonDocument.Parse(jsonString, new JsonDocumentOptions { CommentHandling = JsonCommentHandling.Skip });
-            var jroot = jdoc.RootElement;
+            return Store(jdoc.RootElement);
+        }
+
+        public string Store(JsonElement element)
+        {
             var builder = new StringBuilder();
             var rootUnit = new JsonUnit();
 
-            StoreElement(jroot, rootUnit, builder);
+            StoreElement(element, rootUnit, builder);
 
             _context.JsonUnits.Add(rootUnit);
             var debugview = _context.ChangeTracker.DebugView.ShortView;
