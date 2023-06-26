@@ -13,7 +13,7 @@ namespace JsonSqlConfig.Experiments
 
         public JsonParser(
             JsonSqlConfigContext context,
-            ILogger<JsonParser> logger) 
+            ILogger<JsonParser> logger)
         {
             _context = context;
             _logger = logger;
@@ -30,7 +30,8 @@ namespace JsonSqlConfig.Experiments
             var rootUnit = new JsonUnit();
 
             StoreElement(element, rootUnit);
-            AssignIndexes(rootUnit);
+            AssignIndex(rootUnit);
+            AssignPath(rootUnit);
 
             _context.JsonUnits.Add(rootUnit);
             var debugview = _context.ChangeTracker.DebugView.ShortView;
@@ -171,7 +172,7 @@ namespace JsonSqlConfig.Experiments
                 if (delimit) sb.AppendLine();
                 sb.Append($"{indent}]");
             }
-            else 
+            else
             {
                 var name = unit.Name == null ? string.Empty : $"\"{unit.Name}\": ";
                 string value;
@@ -190,7 +191,7 @@ namespace JsonSqlConfig.Experiments
             return child;
         }
 
-        private void AssignIndexes(JsonUnit unit) 
+        private void AssignIndex(JsonUnit unit)
         {
             if (unit.CompositeType == JsonUnitCompositeType.Array)
             {
@@ -199,15 +200,30 @@ namespace JsonSqlConfig.Experiments
                 {
                     child.Index = index;
                     index++;
-                    AssignIndexes(child);
+                    AssignIndex(child);
                 }
             }
             else if (unit.CompositeType == JsonUnitCompositeType.Object)
             {
                 foreach (var child in unit.Child)
                 {
-                    AssignIndexes(child);
+                    AssignIndex(child);
                 }
+            }
+        }
+
+        private void AssignPath(JsonUnit unit, string path = "")
+        {
+            var delimiter = string.IsNullOrWhiteSpace(path) ? "" : ":";
+                    
+            if (unit.Name != null) path += (delimiter + unit.Name.Trim());
+            else if (unit.Index != null) path += (delimiter + unit.Index.ToString());
+
+            unit.Path = path;
+
+            foreach (var child in unit.Child)
+            {
+                AssignPath(child, path);
             }
         }
     }
