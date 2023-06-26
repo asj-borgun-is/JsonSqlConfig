@@ -23,9 +23,11 @@ namespace JsonSqlConfig.Controllers
         [HttpPost]
         public ActionResult<string> PostConfig([FromBody]object jsonElement)
         {
-            var jdoc = (JsonElement)jsonElement;
-            var parseResult = _jsonParser.Store(jdoc);
-            return parseResult;
+            var element = (JsonElement)jsonElement;
+
+            var unit = _jsonParser.Store(element);
+
+            return Ok(_jsonParser.GetJsonString(unit));
         }
     }
 }

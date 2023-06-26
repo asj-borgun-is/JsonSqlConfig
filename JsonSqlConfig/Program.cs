@@ -18,7 +18,7 @@ namespace JsonSqlConfig
 
             var app = builder.Build();
 
-            DbExperiment(app);
+            LightDbTest(app);
 
             Configure(app);
 
@@ -58,7 +58,7 @@ namespace JsonSqlConfig
             app.MapControllers();
         }
 
-        private static void DbExperiment(WebApplication app)
+        private static void LightDbTest(WebApplication app)
         {
             using (var scope = app.Services.CreateScope())
             {

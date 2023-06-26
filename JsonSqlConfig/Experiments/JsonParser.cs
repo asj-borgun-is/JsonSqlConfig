@@ -19,42 +19,35 @@ namespace JsonSqlConfig.Experiments
             _logger = logger;
         }
 
-        public string Store(string jsonString)
+        public JsonUnit Store(string jsonString)
         {
             using var jdoc = JsonDocument.Parse(jsonString, new JsonDocumentOptions { CommentHandling = JsonCommentHandling.Skip });
             return Store(jdoc.RootElement);
         }
 
-        public string Store(JsonElement element)
+        public JsonUnit Store(JsonElement element)
         {
-            var builder = new StringBuilder();
             var rootUnit = new JsonUnit();
 
-            StoreElement(element, rootUnit, builder);
+            StoreElement(element, rootUnit);
             AssignIndexes(rootUnit);
 
             _context.JsonUnits.Add(rootUnit);
             var debugview = _context.ChangeTracker.DebugView.ShortView;
-            _logger.LogInformation(debugview);
+            _logger.LogDebug(debugview);
             _context.SaveChanges();
 
-            var dump = builder.ToString();
-            _logger.LogInformation(dump);
-
-            var jsonString = GetJsonString(rootUnit);
-            _logger.LogInformation(jsonString);
-
-            return dump;
+            return rootUnit;
         }
 
-        private void StoreElement(JsonElement element, JsonUnit unit, StringBuilder builder, string indent = "")
+        private void StoreElement(JsonElement element, JsonUnit unit)
         {
             if (element.ValueKind == JsonValueKind.Object)
             {
                 unit.CompositeType = JsonUnitCompositeType.Object;
                 foreach (var p in element.EnumerateObject())
                 {
-                    StoreProperty(p, CreateChild(unit), builder, indent);
+                    StoreProperty(p, CreateChild(unit));
                 }
             }
             else if (element.ValueKind == JsonValueKind.Array)
@@ -62,59 +55,47 @@ namespace JsonSqlConfig.Experiments
                 unit.CompositeType = JsonUnitCompositeType.Array;
                 foreach (var e in element.EnumerateArray())
                 {
-                    StoreElement(e, CreateChild(unit), builder, indent);
+                    StoreElement(e, CreateChild(unit));
                 }
             }
             else if (element.ValueKind != JsonValueKind.Undefined)
             {
-                builder.AppendLine($"{indent}{StoreValue(element, unit)}");
+                StoreValue(element, unit);
             }
         }
 
-        private void StoreProperty(JsonProperty property, JsonUnit unit, StringBuilder builder, string indent = "")
+        private void StoreProperty(JsonProperty property, JsonUnit unit)
         {
-            if (property.Value.ValueKind == JsonValueKind.Object) StoreObjectProperty(property, unit, builder, indent);
-            else if (property.Value.ValueKind == JsonValueKind.Array) StoreArrayProperty(property, unit, builder, indent);
-            else StoreSimpleProperty(property, unit, builder, indent);
+            if (property.Value.ValueKind == JsonValueKind.Object) StoreObjectProperty(property, unit);
+            else if (property.Value.ValueKind == JsonValueKind.Array) StoreArrayProperty(property, unit);
+            else StoreSimpleProperty(property, unit);
         }
 
-        private void StoreSimpleProperty(JsonProperty property, JsonUnit unit, StringBuilder builder, string indent = "")
+        private void StoreSimpleProperty(JsonProperty property, JsonUnit unit)
         {
             unit.Name = property.Name;
             var displayValue = StoreValue(property.Value, unit);
-
-            var displayName = property.Name ?? "(null)";
-            var displayKind = property.Value.ValueKind.ToString();
-            builder.AppendLine($"{indent}Name: {displayName}, Kind: {displayKind}, Value: {displayValue}");
         }
 
-        private void StoreObjectProperty(JsonProperty property, JsonUnit unit, StringBuilder builder, string indent = "")
+        private void StoreObjectProperty(JsonProperty property, JsonUnit unit)
         {
             unit.Name = property.Name;
             unit.CompositeType = JsonUnitCompositeType.Object;
 
-            var displayName = property.Name ?? "(null)";
-            var displayKind = property.Value.ValueKind.ToString();
-            builder.AppendLine($"{indent}Name: {displayName}, Kind: {displayKind}");
-            indent += "\t";
             foreach (var p in property.Value.EnumerateObject())
             {
-                StoreProperty(p, CreateChild(unit), builder, indent);
+                StoreProperty(p, CreateChild(unit));
             }
         }
 
-        private void StoreArrayProperty(JsonProperty property, JsonUnit unit, StringBuilder builder, string indent = "")
+        private void StoreArrayProperty(JsonProperty property, JsonUnit unit)
         {
             unit.Name = property.Name;
             unit.CompositeType = JsonUnitCompositeType.Array;
 
-            var displayName = property.Name ?? "(null)";
-            var displayKind = property.Value.ValueKind.ToString();
-            builder.AppendLine($"{indent}Name: {displayName}, Kind: {displayKind}");
-            indent += "\t";
             foreach (var e in property.Value.EnumerateArray())
             {
-                StoreElement(e, CreateChild(unit), builder, indent);
+                StoreElement(e, CreateChild(unit));
             }
         }
 
