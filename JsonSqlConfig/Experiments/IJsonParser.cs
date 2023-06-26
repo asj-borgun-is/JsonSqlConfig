@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using JsonSqlConfigDb.Model;
+using System.Text.Json;
 
 namespace JsonSqlConfig.Experiments
 {
@@ -6,5 +7,6 @@ namespace JsonSqlConfig.Experiments
     {
         string Store(string jsonString);
         string Store(JsonElement element);
+        string GetJsonString(JsonUnit unit);
     }
 }

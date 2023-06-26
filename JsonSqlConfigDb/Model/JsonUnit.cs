@@ -2,7 +2,7 @@
 {
     public class JsonUnit
     {
-        public JsonUnit() 
+        public JsonUnit()
         {
             Child = new List<JsonUnit>();
         }
@@ -13,6 +13,7 @@
         public JsonUnitCompositeType CompositeType { get; set; }
         public string Name { get; set; }
         public int? Index { get; set; }
+        public string Group { get; set; }
         public string Path { get; set; }
         public string Value { get; set; }
         public List<JsonUnit> Child { get; set; }

@@ -33,6 +33,13 @@ namespace JsonSqlConfigDb.Migrations
                     b.Property<int>("CompositeType")
                         .HasColumnType("int");
 
+                    b.Property<string>("Group")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)")
+                        .HasDefaultValue("");
+
                     b.Property<int?>("Index")
                         .HasColumnType("int");
 

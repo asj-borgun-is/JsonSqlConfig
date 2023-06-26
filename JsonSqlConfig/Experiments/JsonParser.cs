@@ -31,6 +31,7 @@ namespace JsonSqlConfig.Experiments
             var rootUnit = new JsonUnit();
 
             StoreElement(element, rootUnit, builder);
+            AssignIndexes(rootUnit);
 
             _context.JsonUnits.Add(rootUnit);
             var debugview = _context.ChangeTracker.DebugView.ShortView;
@@ -39,6 +40,9 @@ namespace JsonSqlConfig.Experiments
 
             var dump = builder.ToString();
             _logger.LogInformation(dump);
+
+            var jsonString = GetJsonString(rootUnit);
+            _logger.LogInformation(jsonString);
 
             return dump;
         }
@@ -129,12 +133,12 @@ namespace JsonSqlConfig.Experiments
             else if (element.ValueKind == JsonValueKind.True || element.ValueKind == JsonValueKind.False)
             {
                 unit.SimpleType = JsonUnitSimpleType.Boolean;
-                unit.Value = element.ValueKind.ToString();
+                unit.Value = element.GetRawText();
             }
             else if (element.ValueKind == JsonValueKind.Null)
             {
                 unit.SimpleType = JsonUnitSimpleType.Null;
-                unit.Value = element.ValueKind.ToString();
+                unit.Value = element.GetRawText();
             }
 
             string displayValue = string.Empty;
@@ -145,12 +149,85 @@ namespace JsonSqlConfig.Experiments
             return displayValue;
         }
 
+        public string GetJsonString(JsonUnit unit)
+        {
+            var sb = new StringBuilder();
+            BuildJsonString(unit, sb);
+            return sb.ToString();
+        }
+
+        private void BuildJsonString(JsonUnit unit, StringBuilder sb, string indent = "")
+        {
+            if (unit.CompositeType == JsonUnitCompositeType.Object)
+            {
+                var name = unit.Name == null ? string.Empty : $"\"{unit.Name}\": ";
+                sb.AppendLine($"{indent}{name}{{");
+                var nextIndent = indent + "\t";
+                var delimit = false;
+                foreach (var child in unit.Child)
+                {
+                    if (delimit) sb.AppendLine(",");
+                    delimit = true;
+
+                    BuildJsonString(child, sb, nextIndent);
+                }
+                if (delimit) sb.AppendLine();
+                sb.Append($"{indent}}}");
+            }
+            else if (unit.CompositeType == JsonUnitCompositeType.Array)
+            {
+                var name = unit.Name == null ? string.Empty : $"\"{unit.Name}\": ";
+                sb.AppendLine($"{indent}{name}[");
+                var nextIndent = indent + "\t";
+                var delimit = false;
+                foreach (var child in unit.Child)
+                {
+                    if (delimit) sb.AppendLine(",");
+                    delimit = true;
+
+                    BuildJsonString(child, sb, nextIndent);
+                }
+                if (delimit) sb.AppendLine();
+                sb.Append($"{indent}]");
+            }
+            else 
+            {
+                var name = unit.Name == null ? string.Empty : $"\"{unit.Name}\": ";
+                string value;
+                if (unit.SimpleType == JsonUnitSimpleType.String) value = $"\"{unit.Value}\"";
+                else value = unit.Value;
+
+                sb.Append($"{indent}{name}{value}");
+            }
+        }
+
         private JsonUnit CreateChild(JsonUnit unit)
         {
             var child = new JsonUnit();
             unit.Child.Add(child);
             child.Parent = unit;
             return child;
+        }
+
+        private void AssignIndexes(JsonUnit unit) 
+        {
+            if (unit.CompositeType == JsonUnitCompositeType.Array)
+            {
+                var index = 0;
+                foreach (var child in unit.Child)
+                {
+                    child.Index = index;
+                    index++;
+                    AssignIndexes(child);
+                }
+            }
+            else if (unit.CompositeType == JsonUnitCompositeType.Object)
+            {
+                foreach (var child in unit.Child)
+                {
+                    AssignIndexes(child);
+                }
+            }
         }
     }
 }

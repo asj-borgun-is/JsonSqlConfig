@@ -25,6 +25,7 @@ namespace JsonSqlConfigDb.Migrations
                     CompositeType = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
                     Index = table.Column<int>(type: "int", nullable: true),
+                    Group = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false, defaultValue: ""),
                     Path = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: true),
                     Value = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: true),
                     ParentId = table.Column<long>(type: "bigint", nullable: true)

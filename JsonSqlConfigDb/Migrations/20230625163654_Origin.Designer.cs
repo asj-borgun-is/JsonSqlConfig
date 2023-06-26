@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JsonSqlConfigDb.Migrations
 {
     [DbContext(typeof(JsonSqlConfigContext))]
-    [Migration("20230625092716_Origin")]
+    [Migration("20230625163654_Origin")]
     partial class Origin
     {
         /// <inheritdoc />
@@ -35,6 +35,13 @@ namespace JsonSqlConfigDb.Migrations
 
                     b.Property<int>("CompositeType")
                         .HasColumnType("int");
+
+                    b.Property<string>("Group")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)")
+                        .HasDefaultValue("");
 
                     b.Property<int?>("Index")
                         .HasColumnType("int");
