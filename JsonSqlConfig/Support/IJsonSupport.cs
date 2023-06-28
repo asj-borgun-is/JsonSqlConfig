@@ -7,8 +7,9 @@ namespace JsonSqlConfig.Support
     {
         Task<JsonUnit> Store(string jsonString, string group = "");
         Task<JsonUnit> Store(JsonElement element, string group = "");
-        Task<string> GetJsonString(string group);
-        string GetJsonString(JsonUnit unit);
-        Task<bool> GroupExists(string group);
+        Task<string> Get(string group);
+        string Get(JsonUnit unit);
+        Task<bool> Exists(string group);
+        Task Delete(string group);
     }
 }

@@ -1,4 +1,5 @@
 using JsonSqlConfig.Support;
+using JsonSqlConfigDb;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Text.Json;
@@ -11,52 +12,68 @@ namespace JsonSqlConfig.Controllers
     public class JsonSqlConfigController : ControllerBase
     {
         private readonly ILogger<JsonSqlConfigController> _logger;
-        private readonly IJsonSupport _jsonParser;
+        private readonly IJsonSupport _jsonSupport;
         private readonly IWebHostEnvironment _environment;
 
         public JsonSqlConfigController(
             ILogger<JsonSqlConfigController> logger,
-            IJsonSupport jsonParser,
+            IJsonSupport jsonSupport,
             IWebHostEnvironment environment)
         {
             _logger = logger;
-            _jsonParser = jsonParser;
+            _jsonSupport = jsonSupport;
             _environment = environment;
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostConfig([FromBody]object jsonElement) 
+        public async Task<IActionResult> PostConfigDefault([FromBody]object jsonElement) 
         {
             return await ActionWrapper(() => PostConfigAction(jsonElement));
         }
 
         [HttpPost("{group}")]
-        public async Task<IActionResult> PostConfigInGroup([FromBody]object jsonElement, string group) 
+        public async Task<IActionResult> PostConfig([FromBody]object jsonElement, string group) 
         {
+            group ??= string.Empty;
             return await ActionWrapper(() => PostConfigAction(jsonElement, group));
         }
 
         [HttpGet("{group}")]
         public async Task<ActionResult<string>> GetConfig(string group)
         {
+            group ??= string.Empty;
             return await ActionWrapper(() => GetConfigAction(group));
+        }
+
+        [HttpDelete("{group}")]
+        public async Task<IActionResult> DeleteConfig(string group)
+        {
+            group ??= string.Empty;
+            return await ActionWrapper(() => DeleteConfigAction(group));
         }
 
         private async Task<IActionResult> PostConfigAction(object jsonElement, string group = "")
         {
-            group ??= string.Empty;
-            if (await _jsonParser.GroupExists(group)) return Conflict($"Group ({group}) already exists.");
+            if (await _jsonSupport.Exists(group)) return Conflict($"Group ({group}) already exists.");
 
             var element = (JsonElement)jsonElement;
-            await _jsonParser.Store(element, group);
+            await _jsonSupport.Store(element, group);
             return NoContent();
         }
 
         private async Task<ActionResult<string>> GetConfigAction(string group)
         {
-            var jsonString = await _jsonParser.GetJsonString(group);
+            var jsonString = await _jsonSupport.Get(group);
             if (jsonString == null) return NotFound();
             return Ok(jsonString);
+        }
+
+        private async Task<IActionResult> DeleteConfigAction(string group)
+        {
+            if (!await _jsonSupport.Exists(group)) return NotFound();
+
+            await _jsonSupport.Delete(group);
+            return NoContent();
         }
 
         private async Task<ActionResult<TReturn>> ActionWrapper<TReturn>(Func<Task<ActionResult<TReturn>>> action)

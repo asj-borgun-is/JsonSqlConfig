@@ -43,25 +43,36 @@ namespace JsonSqlConfig.Support
             return rootUnit;
         }
 
-        public async Task<bool> GroupExists(string group)
+        public async Task<bool> Exists(string group)
         {
             return (await _context.JsonUnits.FirstOrDefaultAsync(u => u.Group == group.ToUpper()) != null);
         }
 
-        public async Task<string> GetJsonString(string group)
+        public async Task<string> Get(string group)
         {
             // Load the group and get the root unit
-            group ??= string.Empty;
             var rootUnit = await LoadGroup(group);
             if (rootUnit == null) return null;
-            return GetJsonString(rootUnit);
+            return Get(rootUnit);
         }
 
-        public string GetJsonString(JsonUnit unit)
+        public string Get(JsonUnit unit)
         {
             var sb = new StringBuilder();
             BuildJsonString(unit, sb);
             return sb.ToString();
+        }
+
+        public async Task Delete(string group)
+        {
+            var query = _context.JsonUnits.Where(u => u.Group == group.ToUpper());
+
+            // Remove all units in group
+            await foreach (var unit in query.AsAsyncEnumerable())
+            {
+                _context.JsonUnits.Remove(unit);
+            }
+            await _context.SaveChangesAsync();
         }
 
         private void StoreElement(JsonElement element, JsonUnit unit)
