@@ -21,11 +21,21 @@ namespace JsonSqlConfig.Controllers
         }
 
         [HttpPost]
-        public ActionResult<string> PostConfig([FromBody]object jsonElement)
+        public ActionResult<string> PostConfig([FromBody]object jsonElement) 
         {
             var element = (JsonElement)jsonElement;
 
             var unit = _jsonParser.Store(element);
+
+            return Ok(_jsonParser.GetJsonString(unit));
+        }
+
+        [HttpPost("{group}")]
+        public ActionResult<string> PostConfigInGroup([FromBody]object jsonElement, string group) 
+        {
+            var element = (JsonElement)jsonElement;
+
+            var unit = _jsonParser.Store(element, group);
 
             return Ok(_jsonParser.GetJsonString(unit));
         }

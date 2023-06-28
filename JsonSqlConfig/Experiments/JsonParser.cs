@@ -8,8 +8,8 @@ namespace JsonSqlConfig.Experiments
 {
     public class JsonParser : IJsonParser
     {
-        private JsonSqlConfigContext _context;
-        private ILogger _logger;
+        private readonly JsonSqlConfigContext _context;
+        private readonly ILogger _logger;
 
         public JsonParser(
             JsonSqlConfigContext context,
@@ -19,19 +19,20 @@ namespace JsonSqlConfig.Experiments
             _logger = logger;
         }
 
-        public JsonUnit Store(string jsonString)
+        public JsonUnit Store(string jsonString, string group = "")
         {
             using var jdoc = JsonDocument.Parse(jsonString, new JsonDocumentOptions { CommentHandling = JsonCommentHandling.Skip });
-            return Store(jdoc.RootElement);
+            return Store(jdoc.RootElement, group);
         }
 
-        public JsonUnit Store(JsonElement element)
+        public JsonUnit Store(JsonElement element, string group = "")
         {
             var rootUnit = new JsonUnit();
 
             StoreElement(element, rootUnit);
             AssignIndex(rootUnit);
             AssignPath(rootUnit);
+            AssignGroup(rootUnit, group);
 
             _context.JsonUnits.Add(rootUnit);
             var debugview = _context.ChangeTracker.DebugView.ShortView;
@@ -214,7 +215,7 @@ namespace JsonSqlConfig.Experiments
 
         private void AssignPath(JsonUnit unit, string path = "")
         {
-            var delimiter = string.IsNullOrWhiteSpace(path) ? "" : ":";
+            var delimiter = string.IsNullOrWhiteSpace(path) ? string.Empty : ":";
                     
             if (unit.Name != null) path += (delimiter + unit.Name.Trim());
             else if (unit.Index != null) path += (delimiter + unit.Index.ToString());
@@ -224,6 +225,16 @@ namespace JsonSqlConfig.Experiments
             foreach (var child in unit.Child)
             {
                 AssignPath(child, path);
+            }
+        }
+
+        private void AssignGroup(JsonUnit unit, string group)
+        {
+            unit.Group = group;
+
+            foreach (var child in unit.Child)
+            {
+                AssignGroup(child, group);
             }
         }
     }

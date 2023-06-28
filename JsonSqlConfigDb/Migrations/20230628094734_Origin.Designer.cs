@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JsonSqlConfigDb.Migrations
 {
     [DbContext(typeof(JsonSqlConfigContext))]
-    [Migration("20230625163654_Origin")]
+    [Migration("20230628094734_Origin")]
     partial class Origin
     {
         /// <inheritdoc />
@@ -57,8 +57,11 @@ namespace JsonSqlConfigDb.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("Path")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(512)
-                        .HasColumnType("nvarchar(512)");
+                        .HasColumnType("nvarchar(512)")
+                        .HasDefaultValue("");
 
                     b.Property<int>("SimpleType")
                         .HasColumnType("int");
@@ -70,6 +73,9 @@ namespace JsonSqlConfigDb.Migrations
                     b.HasKey("JsonUnitId");
 
                     b.HasIndex("ParentId");
+
+                    b.HasIndex(new[] { "Group", "Path" }, "IX_JsonUnits_Group_Path")
+                        .IsUnique();
 
                     b.ToTable("JsonUnits", "JsonSqlConfig");
                 });

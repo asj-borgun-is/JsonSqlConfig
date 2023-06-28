@@ -5,8 +5,8 @@ namespace JsonSqlConfig.Experiments
 {
     public interface IJsonParser
     {
-        JsonUnit Store(string jsonString);
-        JsonUnit Store(JsonElement element);
+        JsonUnit Store(string jsonString, string group = "");
+        JsonUnit Store(JsonElement element, string group = "");
         string GetJsonString(JsonUnit unit);
     }
 }
