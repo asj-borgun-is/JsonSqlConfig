@@ -8,7 +8,6 @@
         }
 
         public long JsonUnitId { get; set; }
-        public bool IsInactive { get; set; }
         public JsonUnitSimpleType SimpleType { get; set; }
         public JsonUnitCompositeType CompositeType { get; set; }
         public string Name { get; set; }

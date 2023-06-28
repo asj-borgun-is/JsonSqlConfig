@@ -20,7 +20,6 @@ namespace JsonSqlConfigDb.Migrations
                 {
                     JsonUnitId = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    IsInactive = table.Column<bool>(type: "bit", nullable: false),
                     SimpleType = table.Column<int>(type: "int", nullable: false),
                     CompositeType = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),

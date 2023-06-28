@@ -34,45 +34,49 @@ namespace JsonSqlConfig.Controllers
         [HttpPost("{group}")]
         public async Task<IActionResult> PostConfig([FromBody]object jsonElement, string group) 
         {
-            group ??= string.Empty;
             return await ActionWrapper(() => PostConfigAction(jsonElement, group));
         }
 
         [HttpGet("{group}")]
         public async Task<ActionResult<string>> GetConfig(string group)
         {
-            group ??= string.Empty;
             return await ActionWrapper(() => GetConfigAction(group));
         }
 
         [HttpDelete("{group}")]
         public async Task<IActionResult> DeleteConfig(string group)
         {
-            group ??= string.Empty;
             return await ActionWrapper(() => DeleteConfigAction(group));
         }
 
         private async Task<IActionResult> PostConfigAction(object jsonElement, string group = "")
         {
+            group ??= string.Empty;
             if (await _jsonSupport.Exists(group)) return Conflict($"Group ({group}) already exists.");
-
             var element = (JsonElement)jsonElement;
+
             await _jsonSupport.Store(element, group);
+
             return NoContent();
         }
 
         private async Task<ActionResult<string>> GetConfigAction(string group)
         {
+            group ??= string.Empty;
+
             var jsonString = await _jsonSupport.Get(group);
+
             if (jsonString == null) return NotFound();
             return Ok(jsonString);
         }
 
         private async Task<IActionResult> DeleteConfigAction(string group)
         {
+            group ??= string.Empty;
             if (!await _jsonSupport.Exists(group)) return NotFound();
 
             await _jsonSupport.Delete(group);
+
             return NoContent();
         }
 

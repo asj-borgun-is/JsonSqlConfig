@@ -43,9 +43,6 @@ namespace JsonSqlConfigDb.Migrations
                     b.Property<int?>("Index")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsInactive")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Name")
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
