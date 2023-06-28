@@ -5,8 +5,10 @@ namespace JsonSqlConfig.Experiments
 {
     public interface IJsonParser
     {
-        JsonUnit Store(string jsonString, string group = "");
-        JsonUnit Store(JsonElement element, string group = "");
+        Task<JsonUnit> Store(string jsonString, string group = "");
+        Task<JsonUnit> Store(JsonElement element, string group = "");
+        Task<string> GetJsonString(string group);
         string GetJsonString(JsonUnit unit);
+        Task<bool> GroupExists(string group);
     }
 }

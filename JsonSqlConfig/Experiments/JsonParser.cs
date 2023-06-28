@@ -3,6 +3,7 @@ using System.Text;
 using JsonSqlConfigDb.Model;
 using JsonSqlConfigDb;
 using System.Globalization;
+using Microsoft.EntityFrameworkCore;
 
 namespace JsonSqlConfig.Experiments
 {
@@ -19,13 +20,13 @@ namespace JsonSqlConfig.Experiments
             _logger = logger;
         }
 
-        public JsonUnit Store(string jsonString, string group = "")
+        public async Task<JsonUnit> Store(string jsonString, string group = "")
         {
             using var jdoc = JsonDocument.Parse(jsonString, new JsonDocumentOptions { CommentHandling = JsonCommentHandling.Skip });
-            return Store(jdoc.RootElement, group);
+            return await Store(jdoc.RootElement, group);
         }
 
-        public JsonUnit Store(JsonElement element, string group = "")
+        public async Task<JsonUnit> Store(JsonElement element, string group = "")
         {
             var rootUnit = new JsonUnit();
 
@@ -37,9 +38,30 @@ namespace JsonSqlConfig.Experiments
             _context.JsonUnits.Add(rootUnit);
             var debugview = _context.ChangeTracker.DebugView.ShortView;
             _logger.LogDebug(debugview);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return rootUnit;
+        }
+
+        public async Task<bool> GroupExists(string group)
+        {
+            return (await _context.JsonUnits.FirstOrDefaultAsync(u => u.Group == group.ToUpper()) != null);
+        }
+
+        public async Task<string> GetJsonString(string group)
+        {
+            // Load the group and get the root unit
+            group ??= string.Empty;
+            var rootUnit = await LoadGroup(group);
+            if (rootUnit == null) return null;
+            return GetJsonString(rootUnit);
+        }
+
+        public string GetJsonString(JsonUnit unit)
+        {
+            var sb = new StringBuilder();
+            BuildJsonString(unit, sb);
+            return sb.ToString();
         }
 
         private void StoreElement(JsonElement element, JsonUnit unit)
@@ -130,13 +152,6 @@ namespace JsonSqlConfig.Experiments
             else displayValue = element.ValueKind.ToString();
 
             return displayValue;
-        }
-
-        public string GetJsonString(JsonUnit unit)
-        {
-            var sb = new StringBuilder();
-            BuildJsonString(unit, sb);
-            return sb.ToString();
         }
 
         private void BuildJsonString(JsonUnit unit, StringBuilder sb, string indent = "")
@@ -230,12 +245,25 @@ namespace JsonSqlConfig.Experiments
 
         private void AssignGroup(JsonUnit unit, string group)
         {
-            unit.Group = group;
+            unit.Group = group.ToUpper();
 
             foreach (var child in unit.Child)
             {
                 AssignGroup(child, group);
             }
+        }
+
+        private async Task<JsonUnit> LoadGroup(string group)
+        {
+            var query = _context.JsonUnits.Where(u => u.Group == group.ToUpper());
+
+            // Load the whole tree and also get the root unit
+            JsonUnit rootUnit = default;
+            await foreach (var unit in query.AsAsyncEnumerable())
+            {
+                if (unit.ParentId == null) rootUnit = unit;
+            }
+            return rootUnit;
         }
     }
 }
