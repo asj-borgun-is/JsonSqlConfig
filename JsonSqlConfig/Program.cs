@@ -1,5 +1,5 @@
 
-using JsonSqlConfig.Experiments;
+using JsonSqlConfig.Support;
 using JsonSqlConfig.Settings;
 using JsonSqlConfigDb;
 using Microsoft.EntityFrameworkCore;
@@ -39,7 +39,7 @@ namespace JsonSqlConfig
                 .EnableSensitiveDataLogging(true)
                 );
 
-            services.AddScoped<IJsonParser, JsonParser>();
+            services.AddScoped<IJsonSupport, JsonSupport>();
         }
 
         public static void Configure(WebApplication app)
@@ -63,7 +63,7 @@ namespace JsonSqlConfig
             using (var scope = app.Services.CreateScope())
             {
                 var context = scope.ServiceProvider.GetService<JsonSqlConfigContext>();
-                var unit = context.JsonUnits.FirstOrDefault();
+                var unit = context.JsonUnits.OrderBy(u => u.JsonUnitId).FirstOrDefault();
             }
         }
     }

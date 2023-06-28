@@ -5,16 +5,16 @@ using JsonSqlConfigDb;
 using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 
-namespace JsonSqlConfig.Experiments
+namespace JsonSqlConfig.Support
 {
-    public class JsonParser : IJsonParser
+    public class JsonSupport : IJsonSupport
     {
         private readonly JsonSqlConfigContext _context;
         private readonly ILogger _logger;
 
-        public JsonParser(
+        public JsonSupport(
             JsonSqlConfigContext context,
-            ILogger<JsonParser> logger)
+            ILogger<JsonSupport> logger)
         {
             _context = context;
             _logger = logger;

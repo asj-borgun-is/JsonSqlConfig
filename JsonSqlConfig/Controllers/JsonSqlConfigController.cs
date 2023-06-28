@@ -1,4 +1,4 @@
-using JsonSqlConfig.Experiments;
+using JsonSqlConfig.Support;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Text.Json;
@@ -11,12 +11,12 @@ namespace JsonSqlConfig.Controllers
     public class JsonSqlConfigController : ControllerBase
     {
         private readonly ILogger<JsonSqlConfigController> _logger;
-        private readonly IJsonParser _jsonParser;
+        private readonly IJsonSupport _jsonParser;
         private readonly IWebHostEnvironment _environment;
 
         public JsonSqlConfigController(
             ILogger<JsonSqlConfigController> logger,
-            IJsonParser jsonParser,
+            IJsonSupport jsonParser,
             IWebHostEnvironment environment)
         {
             _logger = logger;
