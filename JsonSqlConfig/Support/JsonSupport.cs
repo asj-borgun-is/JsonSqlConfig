@@ -45,7 +45,7 @@ namespace JsonSqlConfig.Support
 
         public async Task<bool> Exists(string group)
         {
-            return (await _context.JsonUnits.FirstOrDefaultAsync(u => u.Group == group.ToUpper()) != null);
+            return (await _context.JsonUnits.FirstOrDefaultAsync(u => u.Group == group)) != null;
         }
 
         public async Task<string> Get(string group)
@@ -65,7 +65,7 @@ namespace JsonSqlConfig.Support
 
         public async Task Delete(string group)
         {
-            var query = _context.JsonUnits.Where(u => u.Group == group.ToUpper());
+            var query = _context.JsonUnits.Where(u => u.Group == group);
 
             // Remove all units in group
             await foreach (var unit in query.AsAsyncEnumerable())
@@ -256,8 +256,6 @@ namespace JsonSqlConfig.Support
 
         private void AssignGroup(JsonUnit unit, string group)
         {
-            unit.Group = group.ToUpper();
-
             foreach (var child in unit.Child)
             {
                 AssignGroup(child, group);
@@ -266,7 +264,7 @@ namespace JsonSqlConfig.Support
 
         private async Task<JsonUnit> LoadGroup(string group)
         {
-            var query = _context.JsonUnits.Where(u => u.Group == group.ToUpper());
+            var query = _context.JsonUnits.Where(u => u.Group == group);
 
             // Load the whole tree and also get the root unit
             JsonUnit rootUnit = default;
