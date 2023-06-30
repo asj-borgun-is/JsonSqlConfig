@@ -256,6 +256,7 @@ namespace JsonSqlConfig.Support
 
         private void AssignGroup(JsonUnit unit, string group)
         {
+            unit.Group = group; 
             foreach (var child in unit.Child)
             {
                 AssignGroup(child, group);
