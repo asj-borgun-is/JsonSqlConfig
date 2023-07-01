@@ -25,24 +25,32 @@ namespace JsonSqlConfig.Controllers
         }
 
         [HttpPost("{group}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> PostConfig([FromBody]object jsonElement, string group) 
         {
             return await ActionWrapper(() => PostConfigAction(jsonElement, group));
         }
 
         [HttpPut("{group}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> PutConfig([FromBody]object jsonElement, string group) 
         {
             return await ActionWrapper(() => PutConfigAction(jsonElement, group));
         }
 
         [HttpGet("{group}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<string>> GetConfig(string group)
         {
             return await ActionWrapper(() => GetConfigAction(group));
         }
 
         [HttpDelete("{group}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteConfig(string group)
         {
             return await ActionWrapper(() => DeleteConfigAction(group));
