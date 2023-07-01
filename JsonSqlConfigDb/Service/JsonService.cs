@@ -4,17 +4,18 @@ using JsonSqlConfigDb.Model;
 using JsonSqlConfigDb;
 using System.Globalization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
-namespace JsonSqlConfig.Support
+namespace JsonSqlConfig.Service
 {
-    public class JsonSupport : IJsonSupport
+    public class JsonService : IJsonService
     {
         private readonly JsonSqlConfigContext _context;
         private readonly ILogger _logger;
 
-        public JsonSupport(
+        public JsonService(
             JsonSqlConfigContext context,
-            ILogger<JsonSupport> logger)
+            ILogger<JsonService> logger)
         {
             _context = context;
             _logger = logger;

@@ -1,5 +1,4 @@
-using JsonSqlConfig.Support;
-using JsonSqlConfigDb;
+using JsonSqlConfig.Service;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Text.Json;
@@ -12,16 +11,16 @@ namespace JsonSqlConfig.Controllers
     public class JsonSqlConfigController : ControllerBase
     {
         private readonly ILogger<JsonSqlConfigController> _logger;
-        private readonly IJsonSupport _jsonSupport;
+        private readonly IJsonService _jsonService;
         private readonly IWebHostEnvironment _environment;
 
         public JsonSqlConfigController(
             ILogger<JsonSqlConfigController> logger,
-            IJsonSupport jsonSupport,
+            IJsonService jsonService,
             IWebHostEnvironment environment)
         {
             _logger = logger;
-            _jsonSupport = jsonSupport;
+            _jsonService = jsonService;
             _environment = environment;
         }
 
@@ -52,10 +51,10 @@ namespace JsonSqlConfig.Controllers
         private async Task<IActionResult> PostConfigAction(object jsonElement, string group = "")
         {
             group ??= string.Empty;
-            if (await _jsonSupport.Exists(group)) return Conflict($"Group ({group}) already exists.");
+            if (await _jsonService.Exists(group)) return Conflict($"Group ({group}) already exists.");
             var element = (JsonElement)jsonElement;
 
-            await _jsonSupport.Store(element, group);
+            await _jsonService.Store(element, group);
 
             return NoContent();
         }
@@ -64,7 +63,7 @@ namespace JsonSqlConfig.Controllers
         {
             group ??= string.Empty;
 
-            var jsonString = await _jsonSupport.Get(group);
+            var jsonString = await _jsonService.Get(group);
 
             if (jsonString == null) return NotFound();
             return Ok(jsonString);
@@ -73,9 +72,9 @@ namespace JsonSqlConfig.Controllers
         private async Task<IActionResult> DeleteConfigAction(string group)
         {
             group ??= string.Empty;
-            if (!await _jsonSupport.Exists(group)) return NotFound();
+            if (!await _jsonService.Exists(group)) return NotFound();
 
-            await _jsonSupport.Delete(group);
+            await _jsonService.Delete(group);
 
             return NoContent();
         }

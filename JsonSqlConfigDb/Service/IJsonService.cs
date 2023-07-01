@@ -1,9 +1,9 @@
 ﻿using JsonSqlConfigDb.Model;
 using System.Text.Json;
 
-namespace JsonSqlConfig.Support
+namespace JsonSqlConfig.Service
 {
-    public interface IJsonSupport
+    public interface IJsonService
     {
         Task<JsonUnit> Store(string jsonString, string group = "");
         Task<JsonUnit> Store(JsonElement element, string group = "");

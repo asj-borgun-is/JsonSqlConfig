@@ -1,5 +1,5 @@
 
-using JsonSqlConfig.Support;
+using JsonSqlConfig.Service;
 using JsonSqlConfig.Settings;
 using JsonSqlConfigDb;
 using Microsoft.EntityFrameworkCore;
@@ -39,7 +39,7 @@ namespace JsonSqlConfig
                 .EnableSensitiveDataLogging(true)
                 );
 
-            services.AddScoped<IJsonSupport, JsonSupport>();
+            services.AddScoped<IJsonService, JsonService>();
         }
 
         public static void Configure(WebApplication app)
