@@ -24,16 +24,16 @@ namespace JsonSqlConfig.Controllers
             _environment = environment;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> PostConfigDefault([FromBody]object jsonElement) 
-        {
-            return await ActionWrapper(() => PostConfigAction(jsonElement));
-        }
-
         [HttpPost("{group}")]
         public async Task<IActionResult> PostConfig([FromBody]object jsonElement, string group) 
         {
             return await ActionWrapper(() => PostConfigAction(jsonElement, group));
+        }
+
+        [HttpPut("{group}")]
+        public async Task<IActionResult> PutConfig([FromBody]object jsonElement, string group) 
+        {
+            return await ActionWrapper(() => PutConfigAction(jsonElement, group));
         }
 
         [HttpGet("{group}")]
@@ -56,6 +56,21 @@ namespace JsonSqlConfig.Controllers
 
             await _jsonService.Store(element, group);
 
+            return NoContent();
+        }
+
+        private async Task<IActionResult> PutConfigAction(object jsonElement, string group = "")
+        {
+            group ??= string.Empty;
+            if (!await _jsonService.Exists(group)) return NotFound();
+            var element = (JsonElement)jsonElement;
+
+            using var txn = _jsonService.Database.BeginTransaction();
+
+            await _jsonService.Delete(group);
+            await _jsonService.Store(element, group);
+
+            await txn.CommitAsync();
             return NoContent();
         }
 

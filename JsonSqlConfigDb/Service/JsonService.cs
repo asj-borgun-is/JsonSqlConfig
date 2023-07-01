@@ -5,6 +5,7 @@ using JsonSqlConfigDb;
 using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace JsonSqlConfig.Service
 {
@@ -20,6 +21,8 @@ namespace JsonSqlConfig.Service
             _context = context;
             _logger = logger;
         }
+
+        public DatabaseFacade Database { get => _context.Database; }
 
         public async Task<JsonUnit> Store(string jsonString, string group = "")
         {
