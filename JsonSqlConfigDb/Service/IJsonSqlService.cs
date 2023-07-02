@@ -2,9 +2,9 @@
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using System.Text.Json;
 
-namespace JsonSqlConfig.Service
+namespace JsonSqlConfigDb.Service
 {
-    public interface IJsonService
+    public interface IJsonSqlService
     {
         DatabaseFacade Database { get; }
         Task<JsonUnit> Store(string jsonString, string group = "");

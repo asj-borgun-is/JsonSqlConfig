@@ -1,9 +1,9 @@
-using JsonSqlConfig.Service;
+using JsonSqlConfigDb.Service;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Text.Json;
 
-namespace JsonSqlConfig.Controllers
+namespace JsonSqlConfigDb.Controllers
 {
     [ApiController]
     [Route("[controller]/[Action]")]
@@ -11,12 +11,12 @@ namespace JsonSqlConfig.Controllers
     public class JsonSqlConfigController : ControllerBase
     {
         private readonly ILogger<JsonSqlConfigController> _logger;
-        private readonly IJsonService _jsonService;
+        private readonly IJsonSqlService _jsonService;
         private readonly IWebHostEnvironment _environment;
 
         public JsonSqlConfigController(
             ILogger<JsonSqlConfigController> logger,
-            IJsonService jsonService,
+            IJsonSqlService jsonService,
             IWebHostEnvironment environment)
         {
             _logger = logger;
@@ -54,6 +54,14 @@ namespace JsonSqlConfig.Controllers
         public async Task<IActionResult> DeleteConfig(string group)
         {
             return await ActionWrapper(() => DeleteConfigAction(group));
+        }
+
+        [HttpPost("{group}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> ExistsConfig(string group)
+        {
+            return await ActionWrapper(() => ExistsConfigAction(group));
         }
 
         private async Task<IActionResult> PostConfigAction(object jsonElement, string group = "")
@@ -102,11 +110,23 @@ namespace JsonSqlConfig.Controllers
             return NoContent();
         }
 
+        private async Task<IActionResult> ExistsConfigAction(string group)
+        {
+            group ??= string.Empty;
+            if (!await _jsonService.Exists(group)) return NotFound();
+
+            return NoContent();
+        }
+
         private async Task<ActionResult<TReturn>> ActionWrapper<TReturn>(Func<Task<ActionResult<TReturn>>> action)
         {
             try
             {
                 return await action();
+            }
+            catch (JsonSqlServiceException je)
+            {
+                return Conflict(je.Message);
             }
             catch (Exception ex)
             {
@@ -119,6 +139,10 @@ namespace JsonSqlConfig.Controllers
             try
             {
                 return await action();
+            }
+            catch (JsonSqlServiceException je)
+            {
+                return Conflict(je.Message);
             }
             catch (Exception ex)
             {

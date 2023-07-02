@@ -1,22 +1,22 @@
 ﻿using System.Text.Json;
 using System.Text;
 using JsonSqlConfigDb.Model;
-using JsonSqlConfigDb;
 using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using System.IO;
 
-namespace JsonSqlConfig.Service
+namespace JsonSqlConfigDb.Service
 {
-    public class JsonService : IJsonService
+    public class JsonSqlService : IJsonSqlService
     {
         private readonly JsonSqlConfigContext _context;
         private readonly ILogger _logger;
 
-        public JsonService(
+        public JsonSqlService(
             JsonSqlConfigContext context,
-            ILogger<JsonService> logger)
+            ILogger<JsonSqlService> logger)
         {
             _context = context;
             _logger = logger;
@@ -37,6 +37,7 @@ namespace JsonSqlConfig.Service
             StoreElement(element, rootUnit);
             AssignIndex(rootUnit);
             AssignPath(rootUnit);
+            CheckDuplicatePath(rootUnit);
             AssignGroup(rootUnit, group);
 
             _context.JsonUnits.Add(rootUnit);
@@ -255,6 +256,22 @@ namespace JsonSqlConfig.Service
             foreach (var child in unit.Child)
             {
                 AssignPath(child, path);
+            }
+        }
+
+        private void CheckDuplicatePath(JsonUnit unit, Dictionary<string, JsonUnit> dict = null)
+        {
+            dict ??= new Dictionary<string, JsonUnit>();
+
+            if (dict.ContainsKey(unit.Path))
+            {
+                throw new JsonSqlServiceException($"There is a duplicate property: ({unit.Path})");
+            }
+
+            dict.Add(unit.Path, unit);
+            foreach (var child in unit.Child)
+            {
+                CheckDuplicatePath(child, dict);
             }
         }
 

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 
-namespace JsonSqlConfig.Settings
+namespace JsonSqlConfigDb.Settings
 {
     public class JsonSqlConfigSettings
     {
