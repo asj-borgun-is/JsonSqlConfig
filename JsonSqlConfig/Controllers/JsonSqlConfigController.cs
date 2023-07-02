@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Text.Json;
 
-namespace JsonSqlConfigDb.Controllers
+namespace JsonSqlConfig.Controllers
 {
     [ApiController]
     [Route("[controller]/[Action]")]

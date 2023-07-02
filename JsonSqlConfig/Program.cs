@@ -1,10 +1,10 @@
 
 using JsonSqlConfigDb.Service;
-using JsonSqlConfigDb.Settings;
 using JsonSqlConfigDb;
 using Microsoft.EntityFrameworkCore;
+using JsonSqlConfig.Settings;
 
-namespace JsonSqlConfigDb
+namespace JsonSqlConfig
 {
     public class Program
     {
