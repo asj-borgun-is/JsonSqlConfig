@@ -5,17 +5,16 @@ using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using System.IO;
 
 namespace JsonSqlConfigDb.Service
 {
     public class JsonSqlService : IJsonSqlService
     {
-        private readonly JsonSqlConfigContext _context;
+        private readonly JsonSqlContext _context;
         private readonly ILogger _logger;
 
         public JsonSqlService(
-            JsonSqlConfigContext context,
+            JsonSqlContext context,
             ILogger<JsonSqlService> logger)
         {
             _context = context;
@@ -265,7 +264,7 @@ namespace JsonSqlConfigDb.Service
 
             if (dict.ContainsKey(unit.Path))
             {
-                throw new JsonSqlServiceException($"There is a duplicate property: ({unit.Path})");
+                throw new JsonSqlException($"There is a duplicate property: ({unit.Path})");
             }
 
             dict.Add(unit.Path, unit);

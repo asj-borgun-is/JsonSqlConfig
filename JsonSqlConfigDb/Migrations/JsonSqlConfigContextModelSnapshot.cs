@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace JsonSqlConfigDb.Migrations
 {
-    [DbContext(typeof(JsonSqlConfigContext))]
+    [DbContext(typeof(JsonSqlContext))]
     partial class JsonSqlConfigContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JsonSqlConfigDb
 {
-    public class JsonSqlConfigContext : DbContext
+    public class JsonSqlContext : DbContext
     {
         public DbSet<JsonUnit> JsonUnits { get; set; }
 
-        public JsonSqlConfigContext(DbContextOptions<JsonSqlConfigContext> options)
+        public JsonSqlContext(DbContextOptions<JsonSqlContext> options)
             : base(options)
         {
         }

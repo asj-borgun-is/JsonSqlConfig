@@ -2,7 +2,7 @@
 using JsonSqlConfigDb.Service;
 using JsonSqlConfigDb;
 using Microsoft.EntityFrameworkCore;
-using JsonSqlConfig.Settings;
+using JsonSqlConfigDb.Settings;
 
 namespace JsonSqlConfig
 {
@@ -12,7 +12,7 @@ namespace JsonSqlConfig
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            JsonSqlConfigSettings.CreateInstance(builder.Configuration);
+            JsonSqlSettings.CreateInstance(builder.Configuration);
 
             ConfigureServices(builder.Services);
 
@@ -32,8 +32,8 @@ namespace JsonSqlConfig
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
 
-            services.AddDbContext<JsonSqlConfigContext>(options => options
-                .UseSqlServer(JsonSqlConfigSettings.Instance.GetConnectionString())
+            services.AddDbContext<JsonSqlContext>(options => options
+                .UseSqlServer(JsonSqlSettings.Instance.GetConnectionString())
                 // When an Ilogger is configured the LogTo method is not strictly necessary
                 //.LogTo(m => Console.WriteLine(m), new[] { DbLoggerCategory.Database.Command.Name }, LogLevel.Information)
                 .EnableSensitiveDataLogging(true)
@@ -62,7 +62,7 @@ namespace JsonSqlConfig
         {
             using (var scope = app.Services.CreateScope())
             {
-                var context = scope.ServiceProvider.GetService<JsonSqlConfigContext>();
+                var context = scope.ServiceProvider.GetService<JsonSqlContext>();
                 var unit = context.JsonUnits.OrderBy(u => u.JsonUnitId).FirstOrDefault();
             }
         }

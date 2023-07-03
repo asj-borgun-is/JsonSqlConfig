@@ -1,3 +1,4 @@
+using JsonSqlConfigDb;
 using JsonSqlConfigDb.Service;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -124,7 +125,7 @@ namespace JsonSqlConfig.Controllers
             {
                 return await action();
             }
-            catch (JsonSqlServiceException je)
+            catch (JsonSqlException je)
             {
                 return Conflict(je.Message);
             }
@@ -140,7 +141,7 @@ namespace JsonSqlConfig.Controllers
             {
                 return await action();
             }
-            catch (JsonSqlServiceException je)
+            catch (JsonSqlException je)
             {
                 return Conflict(je.Message);
             }

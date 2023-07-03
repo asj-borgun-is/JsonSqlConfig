@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace JsonSqlConfigDb.Migrations
 {
-    [DbContext(typeof(JsonSqlConfigContext))]
+    [DbContext(typeof(JsonSqlContext))]
     [Migration("20230628192500_Origin")]
     partial class Origin
     {
