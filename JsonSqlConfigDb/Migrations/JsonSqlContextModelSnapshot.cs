@@ -4,7 +4,6 @@ using JsonSqlConfigDb;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,11 +11,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JsonSqlConfigDb.Migrations
 {
     [DbContext(typeof(JsonSqlContext))]
-    [Migration("20230628192500_Origin")]
-    partial class Origin
+    partial class JsonSqlContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -71,7 +68,7 @@ namespace JsonSqlConfigDb.Migrations
 
                     b.HasIndex("ParentId");
 
-                    b.HasIndex(new[] { "Group", "Path" }, "IX_JsonUnits_Group_Path")
+                    b.HasIndex(new[] { "Path" }, "IX_JsonUnits_Path")
                         .IsUnique();
 
                     b.ToTable("JsonUnits", "JsonSqlConfig");

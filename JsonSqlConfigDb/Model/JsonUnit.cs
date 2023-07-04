@@ -15,9 +15,9 @@
         public string Group { get; set; }
         public string Path { get; set; }
         public string Value { get; set; }
-        public List<JsonUnit> Child { get; set; }
-        public JsonUnit Parent { get; set; }
         public long? ParentId { get; set; }
+        public JsonUnit Parent { get; set; }
+        public List<JsonUnit> Child { get; set; }
     }
 
     public enum JsonUnitSimpleType

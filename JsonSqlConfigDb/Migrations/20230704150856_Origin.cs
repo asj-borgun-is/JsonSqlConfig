@@ -41,17 +41,17 @@ namespace JsonSqlConfigDb.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_JsonUnits_Group_Path",
-                schema: "JsonSqlConfig",
-                table: "JsonUnits",
-                columns: new[] { "Group", "Path" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_JsonUnits_ParentId",
                 schema: "JsonSqlConfig",
                 table: "JsonUnits",
                 column: "ParentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_JsonUnits_Path",
+                schema: "JsonSqlConfig",
+                table: "JsonUnits",
+                column: "Path",
+                unique: true);
         }
 
         /// <inheritdoc />

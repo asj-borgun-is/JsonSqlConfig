@@ -16,7 +16,7 @@ namespace JsonSqlConfigDb
         protected override void OnModelCreating(ModelBuilder modelbuilder)
         {
             modelbuilder.Entity<JsonUnit>().ToTable("JsonUnits", "JsonSqlConfig");
-            modelbuilder.Entity<JsonUnit>().HasIndex(e => new { e.Group, e.Path }, "IX_JsonUnits_Group_Path").IsUnique();
+            modelbuilder.Entity<JsonUnit>().HasIndex(e => new { e.Path }, "IX_JsonUnits_Path").IsUnique();
             modelbuilder.Entity<JsonUnit>().Property(e => e.Name).HasMaxLength(128);
             modelbuilder.Entity<JsonUnit>().Property(e => e.Group).HasMaxLength(128).IsRequired().HasDefaultValue(string.Empty);
             modelbuilder.Entity<JsonUnit>().Property(e => e.Path).HasMaxLength(512).IsRequired().HasDefaultValue(string.Empty);
