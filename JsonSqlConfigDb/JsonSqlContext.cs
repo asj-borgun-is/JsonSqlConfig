@@ -9,9 +9,7 @@ namespace JsonSqlConfigDb
         public DbSet<JsonUnit> JsonUnits { get; set; }
 
         public JsonSqlContext(DbContextOptions<JsonSqlContext> options)
-            : base(options)
-        {
-        }
+            : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelbuilder)
         {

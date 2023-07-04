@@ -12,18 +12,19 @@ namespace JsonSqlConfigDb.Extension
         {
             JsonSqlSettings.CreateInstance(config);
 
-            services.AddDbContext<JsonSqlContext>(options => options
+            Action<DbContextOptionsBuilder> optionsBuilderAction = ob => ob
                 .UseSqlServer(JsonSqlSettings.Instance.GetConnectionString())
                 // When an Ilogger is configured the LogTo method is not strictly necessary
                 //.LogTo(m => Console.WriteLine(m), new[] { DbLoggerCategory.Database.Command.Name }, LogLevel.Information)
-                .EnableSensitiveDataLogging(true)
-                );
+                .EnableSensitiveDataLogging(true);
+
+            services.AddDbContext<JsonSqlContext>(optionsBuilderAction);
             return services;
         }
 
-        public static IConfigurationBuilder AddJsonSqlConfigProvider(this IConfigurationBuilder builder) 
+        public static IConfigurationBuilder AddJsonSqlConfigProvider(this IConfigurationBuilder builder, IServiceProvider services) 
         {
-            return builder.Add(new JsonSqlConfigSource());
+            return builder.Add(new JsonSqlConfigSource(services));
         }
     }
 }
