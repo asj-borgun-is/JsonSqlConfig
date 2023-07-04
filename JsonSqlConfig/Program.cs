@@ -1,8 +1,6 @@
 
 using JsonSqlConfigDb.Service;
 using JsonSqlConfigDb;
-using Microsoft.EntityFrameworkCore;
-using JsonSqlConfigDb.Settings;
 using JsonSqlConfigDb.Extension;
 
 namespace JsonSqlConfig
@@ -24,15 +22,16 @@ namespace JsonSqlConfig
             app.Run();
         }
 
-        public static void ConfigureServices(IServiceCollection services, IConfiguration config)
+        public static void ConfigureServices(IServiceCollection services, ConfigurationManager configuration)
         {
             services.AddControllers();
 
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
 
-            services.AddJsonSqlConfigDb(config);
+            services.AddJsonSqlConfigDb(configuration);
             services.AddScoped<IJsonSqlService, JsonSqlService>();
+            configuration.AddJsonSqlConfigProvider();
         }
 
         public static void Configure(WebApplication app)
@@ -58,6 +57,7 @@ namespace JsonSqlConfig
                 var context = scope.ServiceProvider.GetService<JsonSqlContext>();
                 var unit = context.JsonUnits.OrderBy(u => u.JsonUnitId).FirstOrDefault();
             }
+            var property = app.Configuration["Logging:LogLevel:Microsoft"];
         }
     }
 }

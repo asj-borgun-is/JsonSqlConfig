@@ -1,4 +1,5 @@
-﻿using JsonSqlConfigDb.Settings;
+﻿using JsonSqlConfigDb.Provider;
+using JsonSqlConfigDb.Settings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +19,11 @@ namespace JsonSqlConfigDb.Extension
                 .EnableSensitiveDataLogging(true)
                 );
             return services;
+        }
+
+        public static IConfigurationBuilder AddJsonSqlConfigProvider(this IConfigurationBuilder builder) 
+        {
+            return builder.Add(new JsonSqlConfigSource());
         }
     }
 }
