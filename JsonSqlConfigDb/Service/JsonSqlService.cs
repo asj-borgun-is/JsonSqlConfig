@@ -35,9 +35,10 @@ namespace JsonSqlConfigDb.Service
 
             StoreElement(element, rootUnit);
             AssignIndex(rootUnit);
-            AssignPath(rootUnit);
-            CheckDuplicatePath(rootUnit);
             AssignGroup(rootUnit, group);
+            AssignPath(rootUnit);
+            CheckDuplicatePathInUnit(rootUnit);
+            await CheckDuplicatePathInDb(rootUnit);
 
             _context.JsonUnits.Add(rootUnit);
             var debugview = _context.ChangeTracker.DebugView.ShortView;
@@ -250,7 +251,8 @@ namespace JsonSqlConfigDb.Service
             if (unit.Name != null) path += (delimiter + unit.Name.Trim());
             else if (unit.Index != null) path += (delimiter + unit.Index.ToString());
 
-            unit.Path = path;
+            if (!string.IsNullOrWhiteSpace(path)) unit.Path = path;
+            else unit.Path = $"({unit.Group})";
 
             foreach (var child in unit.Child)
             {
@@ -258,20 +260,41 @@ namespace JsonSqlConfigDb.Service
             }
         }
 
-        private void CheckDuplicatePath(JsonUnit unit, Dictionary<string, JsonUnit> dict = null)
+        private void CheckDuplicatePathInUnit(JsonUnit unit, Dictionary<string, JsonUnit> dict = null)
         {
             dict ??= new Dictionary<string, JsonUnit>();
 
             if (dict.ContainsKey(unit.Path))
             {
-                throw new JsonSqlException($"There is a duplicate property: ({unit.Path})");
+                throw new JsonSqlException($"There is a duplicate property ({unit.Path}) in this group");
             }
 
             dict.Add(unit.Path, unit);
             foreach (var child in unit.Child)
             {
-                CheckDuplicatePath(child, dict);
+                CheckDuplicatePathInUnit(child, dict);
             }
+        }
+
+        private async Task CheckDuplicatePathInDb(JsonUnit unit)
+        {
+            var paths = ListUnits(unit).Select(unit => unit.Path).ToList();
+            var dupPath = await _context.JsonUnits.Where(u => u.Group != unit.Group && paths.Contains(u.Path)).FirstOrDefaultAsync();
+            if (dupPath != null)
+            {
+                throw new JsonSqlException($"There is a duplicate property ({dupPath.Path}) in  group {dupPath.Group}");
+            }
+        }
+
+        private List<JsonUnit> ListUnits(JsonUnit unit, List<JsonUnit> list = null)
+        {
+            list ??= new List<JsonUnit>();
+
+            list.Add(unit);
+            foreach (var child in unit.Child)
+                ListUnits(child, list);
+
+            return list;
         }
 
         private void AssignGroup(JsonUnit unit, string group)
