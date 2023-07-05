@@ -14,7 +14,6 @@ namespace JsonSqlConfig
             ConfigureServices(builder.Services, builder.Configuration);
             var app = builder.Build();
 
-            builder.Configuration.AddJsonSqlConfigProvider();
             LightDbTest(app);
 
             Configure(app);
@@ -22,7 +21,7 @@ namespace JsonSqlConfig
             app.Run();
         }
 
-        public static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+        public static void ConfigureServices(IServiceCollection services, ConfigurationManager configuration)
         {
             services.AddControllers();
 
@@ -31,6 +30,7 @@ namespace JsonSqlConfig
 
             services.AddJsonSqlConfigDb(configuration);
             services.AddScoped<IJsonSqlService, JsonSqlService>();
+            configuration.AddJsonSqlConfigProvider();
         }
 
         public static void Configure(WebApplication app)

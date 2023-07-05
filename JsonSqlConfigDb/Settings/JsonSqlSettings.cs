@@ -12,12 +12,13 @@ namespace JsonSqlConfigDb.Settings
         public bool SqlTrustServerCertificate { get; set; } = false;
         public bool SensitiveLogging { get; set; } = false;
 
-        public static JsonSqlSettings Instance { get; set; }
+        private static JsonSqlSettings _instance;
+        public static JsonSqlSettings Instance { get => _instance; }
 
         public static JsonSqlSettings CreateInstance(IConfiguration configuration)
         {
-            Instance = configuration.GetSection(nameof(JsonSqlSettings)).Get<JsonSqlSettings>() ?? new JsonSqlSettings();
-            return Instance;
+            _instance = configuration.GetSection(nameof(JsonSqlSettings)).Get<JsonSqlSettings>() ?? new JsonSqlSettings();
+            return _instance;
         }
 
         public string GetConnectionString()
