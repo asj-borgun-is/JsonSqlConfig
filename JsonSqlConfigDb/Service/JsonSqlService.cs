@@ -41,8 +41,10 @@ namespace JsonSqlConfigDb.Service
             await CheckDuplicatePathInDb(rootUnit);
 
             _context.JsonUnits.Add(rootUnit);
+
             var debugview = _context.ChangeTracker.DebugView.ShortView;
             _logger.LogDebug(debugview);
+
             await _context.SaveChangesAsync();
 
             return rootUnit;

@@ -11,7 +11,8 @@ namespace JsonSqlConfig
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            ConfigureServices(builder.Services, builder.Configuration);
+            ConfigureServices(builder);
+
             var app = builder.Build();
 
             LightDbTest(app);
@@ -21,16 +22,18 @@ namespace JsonSqlConfig
             app.Run();
         }
 
-        public static void ConfigureServices(IServiceCollection services, ConfigurationManager configuration)
+        public static void ConfigureServices(WebApplicationBuilder builder)
         {
-            services.AddControllers();
+            builder.Services.AddApplicationInsightsTelemetry();
 
-            services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
+            builder.Services.AddControllers();
 
-            services.AddJsonSqlConfigDb(configuration);
-            services.AddScoped<IJsonSqlService, JsonSqlService>();
-            configuration.AddJsonSqlConfigProvider();
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
+
+            builder.Services.AddJsonSqlConfigDb(builder.Configuration);
+            builder.Services.AddScoped<IJsonSqlService, JsonSqlService>();
+            builder.Configuration.AddJsonSqlConfigProvider();
         }
 
         public static void Configure(WebApplication app)
@@ -60,7 +63,7 @@ namespace JsonSqlConfig
             logger.LogDebug("First JsonUnit has id {id}", unit?.JsonUnitId.ToString() ?? "(null)" );
 
             // Indirect test by getting a property stored in Db
-            var propertyName = "XTESTARRAYA:0";
+            var propertyName = "TESTARRAYA:0";
             var property = app.Configuration[propertyName];
             logger.LogDebug("Property {propertyname} has value {value}", propertyName, property);
         }
