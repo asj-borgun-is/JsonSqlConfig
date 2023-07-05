@@ -51,13 +51,18 @@ namespace JsonSqlConfig
 
         private static void LightDbTest(WebApplication app)
         {
+            var logger = app.Services.GetService<ILogger<Program>>();
+
             // Test Db
             using var scope = app.Services.CreateScope();
             var context = scope.ServiceProvider.GetService<JsonSqlContext>();
             var unit = context.JsonUnits.OrderBy(u => u.JsonUnitId).FirstOrDefault();
+            logger.LogDebug("First JsonUnit has id {id}", unit?.JsonUnitId.ToString() ?? "(null)" );
 
             // Indirect test by getting a property stored in Db
-            var property = app.Configuration["TESTARRAYA:0"];
+            var propertyName = "XTESTARRAYA:0";
+            var property = app.Configuration[propertyName];
+            logger.LogDebug("Property {propertyname} has value {value}", propertyName, property);
         }
     }
 }
