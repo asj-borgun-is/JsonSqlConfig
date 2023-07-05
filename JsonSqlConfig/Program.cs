@@ -14,7 +14,7 @@ namespace JsonSqlConfig
             ConfigureServices(builder.Services, builder.Configuration);
             var app = builder.Build();
 
-            builder.Configuration.AddJsonSqlConfigProvider(app.Services);
+            builder.Configuration.AddJsonSqlConfigProvider();
             LightDbTest(app);
 
             Configure(app);
@@ -22,7 +22,7 @@ namespace JsonSqlConfig
             app.Run();
         }
 
-        public static void ConfigureServices(IServiceCollection services, IConfigurationRoot configuration)
+        public static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddControllers();
 
@@ -51,11 +51,12 @@ namespace JsonSqlConfig
 
         private static void LightDbTest(WebApplication app)
         {
-            using (var scope = app.Services.CreateScope())
-            {
-                var context = scope.ServiceProvider.GetService<JsonSqlContext>();
-                var unit = context.JsonUnits.OrderBy(u => u.JsonUnitId).FirstOrDefault();
-            }
+            // Test Db
+            using var scope = app.Services.CreateScope();
+            var context = scope.ServiceProvider.GetService<JsonSqlContext>();
+            var unit = context.JsonUnits.OrderBy(u => u.JsonUnitId).FirstOrDefault();
+
+            // Indirect test by getting a property stored in Db
             var property = app.Configuration["TESTARRAYA:0"];
         }
     }

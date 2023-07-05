@@ -9,7 +9,8 @@ namespace JsonSqlConfigDb.Settings
         public string SqlInitialCatalog { get; set; } = string.Empty;
         public string SqlUserID { get; set; } = string.Empty;
         public string SqlPassword { get; set; } = string.Empty;
-        public bool SqlTrustServerCertificate { get; set; }
+        public bool SqlTrustServerCertificate { get; set; } = false;
+        public bool SensitiveLogging { get; set; } = false;
 
         public static JsonSqlSettings Instance { get; set; }
 

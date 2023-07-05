@@ -36,6 +36,7 @@ namespace JsonSqlConfig.Controllers
         [HttpPut("{group}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> PutConfig([FromBody]object jsonElement, string group) 
         {
             return await ActionWrapper(() => PutConfigAction(jsonElement, group));

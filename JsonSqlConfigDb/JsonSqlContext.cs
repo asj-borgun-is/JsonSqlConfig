@@ -11,6 +11,8 @@ namespace JsonSqlConfigDb
         public JsonSqlContext(DbContextOptions<JsonSqlContext> options)
             : base(options) { }
 
+        public static DbContextOptions<JsonSqlContext> Options { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelbuilder)
         {
             modelbuilder.Entity<JsonUnit>().ToTable("JsonUnits", "JsonSqlConfig");
