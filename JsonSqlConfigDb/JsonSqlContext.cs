@@ -11,7 +11,15 @@ namespace JsonSqlConfigDb
         public JsonSqlContext(DbContextOptions<JsonSqlContext> options)
             : base(options) { }
 
-        public static DbContextOptions<JsonSqlContext> Options { get; set; }
+        public static Action<DbContextOptionsBuilder> OptionsAction { get; set; }
+        public static DbContextOptions<JsonSqlContext> Options { 
+            get 
+            {
+                var builder = new DbContextOptionsBuilder<JsonSqlContext>();
+                OptionsAction(builder);
+                return builder.Options;
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelbuilder)
         {

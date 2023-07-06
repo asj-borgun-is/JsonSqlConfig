@@ -280,7 +280,7 @@ namespace JsonSqlConfigDb.Service
 
         private async Task CheckDuplicatePathInDb(JsonUnit unit)
         {
-            var paths = ListUnits(unit).Select(unit => unit.Path).ToList();
+            var paths = ListUnits(unit).Where(u => u.Parent != null).Select(u => u.Path).ToList();
             var dupPath = await _context.JsonUnits.Where(u => u.Group != unit.Group && paths.Contains(u.Path)).FirstOrDefaultAsync();
             if (dupPath != null)
             {

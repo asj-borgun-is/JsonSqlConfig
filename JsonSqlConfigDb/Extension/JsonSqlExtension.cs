@@ -20,10 +20,8 @@ namespace JsonSqlConfigDb.Extension
 
             services.AddDbContext<JsonSqlContext>(optionsBuilderAction);
 
-            // Store options
-            var builder = new DbContextOptionsBuilder<JsonSqlContext>();
-            optionsBuilderAction(builder);
-            JsonSqlContext.Options = builder.Options;
+            // Store options action
+            JsonSqlContext.OptionsAction = optionsBuilderAction;
 
             return services;
         }
