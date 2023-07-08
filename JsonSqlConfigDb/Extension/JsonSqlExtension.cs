@@ -1,5 +1,4 @@
 ﻿using JsonSqlConfigDb.Provider;
-using JsonSqlConfigDb.Settings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,20 +7,12 @@ namespace JsonSqlConfigDb.Extension
 {
     public static class JsonSqlExtension
     {
-        public static IServiceCollection AddJsonSqlConfigDb(this IServiceCollection services, IConfiguration config)
+        public static IServiceCollection AddJsonSqlConfigDb(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction)
         {
-            JsonSqlSettings.CreateInstance(config);
-
-            Action<DbContextOptionsBuilder> optionsBuilderAction = ob => ob
-                .UseSqlServer(JsonSqlSettings.Instance.GetConnectionString())
-                // When an Ilogger is configured the LogTo method is not strictly necessary
-                //.LogTo(m => Console.WriteLine(m), new[] { DbLoggerCategory.Database.Command.Name }, LogLevel.Information)
-                .EnableSensitiveDataLogging(JsonSqlSettings.Instance.SensitiveLogging);
-
-            services.AddDbContext<JsonSqlContext>(optionsBuilderAction);
+            services.AddDbContext<JsonSqlContext>(optionsAction);
 
             // Store options action
-            JsonSqlContext.OptionsAction = optionsBuilderAction;
+            JsonSqlContext.OptionsAction = optionsAction;
 
             return services;
         }
