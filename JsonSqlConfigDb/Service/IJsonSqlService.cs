@@ -13,5 +13,6 @@ namespace JsonSqlConfigDb.Service
         string Get(JsonUnit unit);
         Task<bool> Exists(string group);
         Task Delete(string group);
+        void LoadProvider();
     }
 }

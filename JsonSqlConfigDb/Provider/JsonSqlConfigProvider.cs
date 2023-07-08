@@ -5,6 +5,8 @@ namespace JsonSqlConfigDb.Provider
 {
     public class JsonSqlConfigProvider : ConfigurationProvider
     {
+        public static JsonSqlConfigProvider Instance { get; set; }
+
         public override void Load()
         {
             using var context = new JsonSqlContext(JsonSqlContext.Options);

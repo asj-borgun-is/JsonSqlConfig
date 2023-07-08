@@ -1,6 +1,7 @@
 using JsonSqlConfigDb;
 using JsonSqlConfigDb.Service;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System.Net;
 using System.Text.Json;
 
@@ -14,15 +15,18 @@ namespace JsonSqlConfig.Controllers
         private readonly ILogger<JsonSqlConfigController> _logger;
         private readonly IJsonSqlService _jsonService;
         private readonly IWebHostEnvironment _environment;
+        private readonly IConfiguration _configuration;
 
         public JsonSqlConfigController(
             ILogger<JsonSqlConfigController> logger,
             IJsonSqlService jsonService,
-            IWebHostEnvironment environment)
+            IWebHostEnvironment environment,
+            IConfiguration configuration)
         {
             _logger = logger;
             _jsonService = jsonService;
             _environment = environment;
+            _configuration = configuration;
         }
 
         [HttpPost("{group}")]
@@ -64,6 +68,14 @@ namespace JsonSqlConfig.Controllers
         public async Task<IActionResult> ExistsConfig(string group)
         {
             return await ActionWrapper(() => ExistsConfigAction(group));
+        }
+
+        [HttpPost()]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public IActionResult ReloadConfig()
+        {
+            return ActionWrapper(() => ReloadConfigAction());
         }
 
         private async Task<IActionResult> PostConfigAction(object jsonElement, string group = "")
@@ -120,6 +132,18 @@ namespace JsonSqlConfig.Controllers
             return NoContent();
         }
 
+        private IActionResult ReloadConfigAction()
+        {
+            var propertyName = "Logging:LogLevel:Default";
+            DebugProperty(propertyName, "before reload");
+
+            _jsonService.LoadProvider();
+
+            DebugProperty(propertyName, "after reload");
+
+            return NoContent();
+        }
+
         private async Task<ActionResult<TReturn>> ActionWrapper<TReturn>(Func<Task<ActionResult<TReturn>>> action)
         {
             try
@@ -152,11 +176,33 @@ namespace JsonSqlConfig.Controllers
             }
         }
 
+        private IActionResult ActionWrapper(Func<IActionResult> action)
+        {
+            try
+            {
+                return action();
+            }
+            catch (JsonSqlException je)
+            {
+                return Conflict(je.Message);
+            }
+            catch (Exception ex)
+            {
+                return GetProblemDetails(ex);
+            }
+        }
+
         private ObjectResult GetProblemDetails(Exception ex)
         {
             var errorStatus = (int)HttpStatusCode.InternalServerError;
             if (_environment.IsDevelopment()) return Problem(title: ex.Message, detail: ex.StackTrace, statusCode: errorStatus);
             else return Problem(title: "Internal Error", statusCode: errorStatus);
+        }
+
+        private void DebugProperty(string propertyName, string when)
+        {
+            var property = _configuration[propertyName];
+            _logger.LogDebug("Property {propertyname} has value {property}, {when}", propertyName, property, when);
         }
     }
 }

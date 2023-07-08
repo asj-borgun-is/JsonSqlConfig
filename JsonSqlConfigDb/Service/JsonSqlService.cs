@@ -5,6 +5,7 @@ using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using JsonSqlConfigDb.Provider;
 
 namespace JsonSqlConfigDb.Service
 {
@@ -80,6 +81,12 @@ namespace JsonSqlConfigDb.Service
                 _context.JsonUnits.Remove(unit);
             }
             await _context.SaveChangesAsync();
+        }
+
+        public void LoadProvider()
+        {
+            if (JsonSqlConfigProvider.Instance == null) throw new JsonSqlException($"Configuration provider {nameof(JsonSqlConfigProvider)} has not been added to this app");
+            JsonSqlConfigProvider.Instance.Load();
         }
 
         private void StoreElement(JsonElement element, JsonUnit unit)

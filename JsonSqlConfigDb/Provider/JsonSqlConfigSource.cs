@@ -6,7 +6,8 @@ namespace JsonSqlConfigDb.Provider
     {
         public IConfigurationProvider Build(IConfigurationBuilder builder)
         {
-            return new JsonSqlConfigProvider();
+            JsonSqlConfigProvider.Instance = new JsonSqlConfigProvider();
+            return JsonSqlConfigProvider.Instance;
         }
     }
 }
