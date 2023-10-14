@@ -64,13 +64,6 @@ namespace JsonSqlConfigDb.Service
             return Get(rootUnit);
         }
 
-        public string Get(JsonUnit unit)
-        {
-            var sb = new StringBuilder();
-            BuildJsonString(unit, sb);
-            return sb.ToString();
-        }
-
         public async Task Delete(string group)
         {
             var query = _context.JsonUnits.Where(u => u.Group == group);
@@ -87,6 +80,13 @@ namespace JsonSqlConfigDb.Service
         {
             if (JsonSqlConfigProvider.Instance == null) throw new JsonSqlException($"Configuration provider {nameof(JsonSqlConfigProvider)} has not been added to this app");
             JsonSqlConfigProvider.Instance.Load();
+        }
+
+        private string Get(JsonUnit unit)
+        {
+            var sb = new StringBuilder();
+            BuildJsonString(unit, sb);
+            return sb.ToString();
         }
 
         private void StoreElement(JsonElement element, JsonUnit unit)

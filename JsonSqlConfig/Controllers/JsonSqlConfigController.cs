@@ -1,7 +1,6 @@
 using JsonSqlConfigDb;
 using JsonSqlConfigDb.Service;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System.Net;
 using System.Text.Json;
 
