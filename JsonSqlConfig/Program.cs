@@ -68,7 +68,7 @@ namespace JsonSqlConfig
             using var scope = app.Services.CreateScope();
             var context = scope.ServiceProvider.GetService<JsonSqlContext>();
             var unit = context.JsonUnits.OrderBy(u => u.JsonUnitId).FirstOrDefault();
-            logger.LogDebug("First JsonUnit has id {id}", unit?.JsonUnitId.ToString() ?? "(null)" );
+            logger.LogDebug("First JsonUnit has id {id}", unit?.JsonUnitId);
 
             // Indirect test by getting a property stored in Db
             var propertyName = "TESTARRAYA:0";
