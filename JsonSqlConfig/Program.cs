@@ -40,7 +40,6 @@ namespace JsonSqlConfig
                 // When an Ilogger is configured the LogTo method is not strictly necessary
                 //.LogTo(m => Console.WriteLine(m), new[] { DbLoggerCategory.Database.Command.Name }, LogLevel.Information)
                 .EnableSensitiveDataLogging(JsonSqlSettings.Instance.SensitiveLogging));
-            builder.Services.AddScoped<IJsonSqlService, JsonSqlService>();
             builder.Configuration.AddJsonSqlConfigProvider();
         }
 
