@@ -41,6 +41,7 @@ namespace JsonSqlConfig
                 //.LogTo(m => Console.WriteLine(m), new[] { DbLoggerCategory.Database.Command.Name }, LogLevel.Information)
                 .EnableSensitiveDataLogging(JsonSqlSettings.Instance.SensitiveLogging));
             builder.Configuration.AddJsonSqlConfigProvider();
+            // A no-change for testing
         }
 
         public static void Configure(WebApplication app)
