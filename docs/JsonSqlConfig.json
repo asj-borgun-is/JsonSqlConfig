@@ -1,0 +1,23 @@
+{
+	"XLogging": {
+		"LogLevel": {
+			"Default": "Debug",
+			"Microsoft": "Information",
+			"Microsoft.AspNetCore": "Warning"
+		}
+	},
+	"XJsonSqlConfigSettings": {
+		"SqlDataSource": "elitebook-ubuntu,1450",
+		"SqlInitialCatalog": "JsonSqlConfig",
+		"SqlTrustServerCertificate": true
+	},
+	"TestArrayA": [
+		"StringValueA",
+		123,
+		45.67,
+		null, false, -78.9,
+		{
+			"Embedded": "Object"
+		}
+	]
+}
