@@ -1,4 +1,4 @@
-﻿# A ConfigurationProvider getting its data from a SQL database, accompanied by methods to maintain the database.
+﻿# A ConfigurationProvider getting its data from a SQL database, accompanied by methods and a web API to maintain the database.
 
 This .NET Core C# solution is made up of two projects:
 
@@ -11,3 +11,12 @@ The underlying database has only one table, **JsonUnit**. It is in a sense a mir
 - It has a **Group** name column that enables maintaining a possibly large configuration set by using smaller chunks of properties. Thus, a group would be a subset of the whole configuration, representing properties for a distinct part of the application. All the database maintenance methods take a **Group** parameter, designating the name of the targeted property group in the database.
 
 The (web) interface for database maintenance accepts any valid Json string as input and it is broken up into elements and stored as a set of rows in the **JsonUnit** table.
+
+Some documentation is found in the **docs** folder:
+- **JsonSqlConfig.drawio.pdf** is a graphic data flow depiction
+- **Repo setup.docx** has instructons for setting up the repo runtime environment
+- **JsonSqlConfig.json** is just an example input for the web API Swagger interface
+
+For running the solution use Visual Studio, SQL Server Management Studio and the EF Core CLI, see **Repo setup.docx**
+
+**(Note: At the moment no further information or assistance is provided, sorry!)**
