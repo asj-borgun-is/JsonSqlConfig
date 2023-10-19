@@ -14,7 +14,7 @@ The (web) interface for database maintenance accepts any valid Json string as in
 
 Some documentation is found in the **docs** folder:
 - **JsonSqlConfig.drawio.pdf** is a graphic data flow depiction
-- **Repo setup.docx** has instructons for setting up the repo runtime environment
+- **Repo setup.docx** has instructions for setting up the repo runtime environment
 - **JsonSqlConfig.json** is just an example input for the web API Swagger interface
 
 For running the solution use Visual Studio, SQL Server Management Studio and the EF Core CLI, see **Repo setup.docx**
