@@ -11,25 +11,16 @@ namespace JsonSqlConfig.Settings
         public bool SqlTrustServerCertificate { get; set; }
         public bool SensitiveLogging { get; set; } = false;
 
-        private static JsonSqlSettings _instance;
-        public static JsonSqlSettings Instance { get => _instance; }
-
-        public static JsonSqlSettings CreateInstance(IConfiguration configuration)
-        {
-            _instance = configuration.GetSection(nameof(JsonSqlSettings)).Get<JsonSqlSettings>() ?? new JsonSqlSettings();
-            return _instance;
-        }
-
         public string GetConnectionString()
         {
             var builder = new SqlConnectionStringBuilder();
-            builder.DataSource = Instance.SqlDataSource;
-            if (Instance.SqlInitialCatalog is not null) builder.InitialCatalog = Instance.SqlInitialCatalog;
-            if (Instance.SqlTrustServerCertificate) builder.TrustServerCertificate = Instance.SqlTrustServerCertificate;
-            if (Instance.SqlUserID is not null) builder.UserID = Instance.SqlUserID;
-            if (Instance.SqlPassword is not null) builder.Password = Instance.SqlPassword;
-            if (Instance.SqlUserID is null && Instance.SqlPassword is null) builder.IntegratedSecurity = true;
-            return builder.ConnectionString;
+            builder.DataSource = SqlDataSource;
+            if (SqlInitialCatalog is not null) builder.InitialCatalog = SqlInitialCatalog;
+            if (SqlTrustServerCertificate) builder.TrustServerCertificate = SqlTrustServerCertificate;
+            if (SqlUserID is not null) builder.UserID = SqlUserID;
+            if (SqlPassword is not null) builder.Password = SqlPassword;
+            if (SqlUserID is null && SqlPassword is null) builder.IntegratedSecurity = true;
+            return builder.ConnectionString; 
         }
     }
 }

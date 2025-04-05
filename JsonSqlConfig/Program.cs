@@ -24,7 +24,9 @@ namespace JsonSqlConfig
 
         public static void ConfigureServices(WebApplicationBuilder builder)
         {
-            JsonSqlSettings.CreateInstance(builder.Configuration);
+            var section = builder.Configuration.GetSection(nameof(JsonSqlSettings));
+            var settings = section.Get<JsonSqlSettings>();
+            builder.Services.Configure<JsonSqlSettings>(section);
             
             builder.Services.AddApplicationInsightsTelemetry();
 
@@ -34,11 +36,11 @@ namespace JsonSqlConfig
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddJsonSqlConfigDb(ob => ob
-                .UseSqlServer(JsonSqlSettings.Instance.GetConnectionString())
+                .UseSqlServer(settings.GetConnectionString())
                 // When an Ilogger is configured the LogTo method is not strictly necessary
                 //.LogTo(m => Console.WriteLine(m), new[] { DbLoggerCategory.Database.Command.Name }, LogLevel.Information)
-                .EnableSensitiveDataLogging(JsonSqlSettings.Instance.SensitiveLogging));
-            builder.Configuration.AddJsonSqlConfigProvider();
+                .EnableSensitiveDataLogging(settings.SensitiveLogging));
+            //builder.Configuration.AddJsonSqlConfigProvider();
         }
 
         public static void Configure(WebApplication app)
@@ -64,6 +66,7 @@ namespace JsonSqlConfig
             // Test Db
             using var scope = app.Services.CreateScope();
             var context = scope.ServiceProvider.GetService<JsonSqlContext>();
+            //context.Database.EnsureCreated(); // Rebuild db if needed, can also be done in CLI
             var unit = context.JsonUnits.OrderBy(u => u.JsonUnitId).FirstOrDefault();
             logger.LogDebug("First JsonUnit has id {id}", unit?.JsonUnitId);
 
