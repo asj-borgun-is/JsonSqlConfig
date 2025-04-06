@@ -1,6 +1,8 @@
+using JsonSqlConfig.Settings;
 using JsonSqlConfigDb;
 using JsonSqlConfigDb.Service;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using System.Net;
 using System.Text.Json;
 
@@ -15,17 +17,20 @@ namespace JsonSqlConfig.Controllers
         private readonly IJsonSqlService _jsonService;
         private readonly IWebHostEnvironment _environment;
         private readonly IConfiguration _configuration;
+        private readonly JsonSqlSettings _settings;
 
         public JsonSqlConfigController(
             ILogger<JsonSqlConfigController> logger,
             IJsonSqlService jsonService,
             IWebHostEnvironment environment,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IOptions<JsonSqlSettings> settings)
         {
             _logger = logger;
             _jsonService = jsonService;
             _environment = environment;
             _configuration = configuration;
+            _settings = settings.Value;
         }
 
         [HttpPost("{group}")]
@@ -33,7 +38,7 @@ namespace JsonSqlConfig.Controllers
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> PostConfig([FromBody]object jsonElement, string group) 
         {
-            return await ActionWrapper(() => PostConfigAction(jsonElement, group));
+            return await WrapAction(() => PostConfigAction(jsonElement, group));
         }
 
         [HttpPut("{group}")]
@@ -42,7 +47,7 @@ namespace JsonSqlConfig.Controllers
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> PutConfig([FromBody]object jsonElement, string group) 
         {
-            return await ActionWrapper(() => PutConfigAction(jsonElement, group));
+            return await WrapAction(() => PutConfigAction(jsonElement, group));
         }
 
         [HttpGet("{group}")]
@@ -50,7 +55,7 @@ namespace JsonSqlConfig.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<string>> GetConfig(string group)
         {
-            return await ActionWrapper(() => GetConfigAction(group));
+            return await WrapAction(() => GetConfigAction(group));
         }
 
         [HttpDelete("{group}")]
@@ -58,7 +63,7 @@ namespace JsonSqlConfig.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteConfig(string group)
         {
-            return await ActionWrapper(() => DeleteConfigAction(group));
+            return await WrapAction(() => DeleteConfigAction(group));
         }
 
         [HttpPost("{group}")]
@@ -66,7 +71,7 @@ namespace JsonSqlConfig.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> ExistsConfig(string group)
         {
-            return await ActionWrapper(() => ExistsConfigAction(group));
+            return await WrapAction(() => ExistsConfigAction(group));
         }
 
         [HttpPost()]
@@ -74,7 +79,7 @@ namespace JsonSqlConfig.Controllers
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         public IActionResult ReloadConfig()
         {
-            return ActionWrapper(() => ReloadConfigAction());
+            return WrapAction(() => ReloadConfigAction());
         }
 
         private async Task<IActionResult> PostConfigAction(object jsonElement, string group = "")
@@ -143,7 +148,7 @@ namespace JsonSqlConfig.Controllers
             return NoContent();
         }
 
-        private async Task<ActionResult<TReturn>> ActionWrapper<TReturn>(Func<Task<ActionResult<TReturn>>> action)
+        private async Task<ActionResult<TReturn>> WrapAction<TReturn>(Func<Task<ActionResult<TReturn>>> action)
         {
             try
             {
@@ -159,7 +164,7 @@ namespace JsonSqlConfig.Controllers
             }
         }
 
-        private async Task<IActionResult> ActionWrapper(Func<Task<IActionResult>> action)
+        private async Task<IActionResult> WrapAction(Func<Task<IActionResult>> action)
         {
             try
             {
@@ -175,7 +180,7 @@ namespace JsonSqlConfig.Controllers
             }
         }
 
-        private IActionResult ActionWrapper(Func<IActionResult> action)
+        private IActionResult WrapAction(Func<IActionResult> action)
         {
             try
             {
