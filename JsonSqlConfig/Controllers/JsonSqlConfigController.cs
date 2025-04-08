@@ -55,6 +55,7 @@ namespace JsonSqlConfig.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<string>> GetConfig(string group)
         {
+            _logger.LogDebug($"{nameof(GetConfig)} Task.CurrentId ({Task.CurrentId})");
             return await WrapAction(() => GetConfigAction(group));
         }
 
@@ -110,6 +111,8 @@ namespace JsonSqlConfig.Controllers
 
         private async Task<ActionResult<string>> GetConfigAction(string group)
         {
+            _logger.LogDebug($"{nameof(GetConfigAction)} Task.CurrentId ({Task.CurrentId})");
+
             group ??= string.Empty;
 
             var jsonString = await _jsonService.Get(group);
