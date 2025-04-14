@@ -23,7 +23,9 @@ namespace JsonSqlConfigDb.Extension
                 .EnableSensitiveDataLogging(settings.SensitiveLogging));
 
             services.AddScoped<IJsonSqlService, JsonSqlService>();
-            services.AddScoped<JsonSqlConfigProvider>();
+
+            // Better research better
+            //services.AddScoped<JsonSqlConfigProvider>();
 
             return services;
         }

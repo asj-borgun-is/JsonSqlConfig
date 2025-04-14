@@ -30,7 +30,8 @@ namespace JsonSqlConfig
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddJsonSqlConfigDb(builder.Configuration);
-            builder.Configuration.AddJsonSqlConfigProvider(builder.Services);
+            // Better research better
+            //builder.Configuration.AddJsonSqlConfigProvider(builder.Services);
         }
 
         public static void Configure(WebApplication app)
