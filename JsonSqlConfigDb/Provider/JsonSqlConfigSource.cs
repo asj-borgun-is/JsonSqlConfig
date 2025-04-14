@@ -5,16 +5,17 @@ namespace JsonSqlConfigDb.Provider
 {
     internal class JsonSqlConfigSource : IConfigurationSource
     {
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IServiceCollection _services;
 
-        public JsonSqlConfigSource(IServiceProvider serviceProvider)
+        public JsonSqlConfigSource(IServiceCollection services)
         {
-            _serviceProvider = serviceProvider;
+            _services = services;
         }
 
         public IConfigurationProvider Build(IConfigurationBuilder builder)
         {
-            return _serviceProvider.GetRequiredService<JsonSqlConfigProvider>();
+            var serviceProvider = _services.BuildServiceProvider();
+            return serviceProvider.GetRequiredService<JsonSqlConfigProvider>();
         }
     }
 }

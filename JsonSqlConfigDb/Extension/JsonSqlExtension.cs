@@ -30,8 +30,7 @@ namespace JsonSqlConfigDb.Extension
 
         public static IConfigurationBuilder AddJsonSqlConfigProvider(this IConfigurationBuilder builder, IServiceCollection services) 
         {
-            var serviceProvider = services.BuildServiceProvider();
-            return builder.Add(new JsonSqlConfigSource(serviceProvider));
+            return builder.Add(new JsonSqlConfigSource(services));
         }
     }
 }
