@@ -1,5 +1,6 @@
 ﻿using JsonSqlConfigDb.Provider;
 using JsonSqlConfigDb.Service;
+using JsonSqlConfigDb.Settings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +17,24 @@ namespace JsonSqlConfigDb.Extension
 
             // Store options action
             JsonSqlContext.OptionsAction = optionsAction;
+
+            return services;
+        }
+
+        public static IServiceCollection AddJsonSqlConfigDb(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddOptions<JsonSqlSettings>()
+                .Configure<IConfiguration>(
+                    (opt, conf) => conf.GetSection(nameof(JsonSqlSettings)).Bind(opt)
+                );
+
+            var settings = configuration.GetSection(nameof(JsonSqlSettings)).Get<JsonSqlSettings>();
+
+            services.AddDbContext<JsonSqlContext>(ob => ob
+                .UseSqlServer(settings.GetConnectionString())
+                .EnableSensitiveDataLogging(settings.SensitiveLogging));
+
+            services.AddScoped<IJsonSqlService, JsonSqlService>();
 
             return services;
         }

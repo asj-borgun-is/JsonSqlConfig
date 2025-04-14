@@ -1,4 +1,4 @@
-using JsonSqlConfig.Settings;
+using JsonSqlConfigDb.Settings;
 using JsonSqlConfigDb;
 using JsonSqlConfigDb.Service;
 using Microsoft.AspNetCore.Mvc;
