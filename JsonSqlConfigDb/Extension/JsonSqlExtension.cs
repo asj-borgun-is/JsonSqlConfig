@@ -23,13 +23,15 @@ namespace JsonSqlConfigDb.Extension
                 .EnableSensitiveDataLogging(settings.SensitiveLogging));
 
             services.AddScoped<IJsonSqlService, JsonSqlService>();
+            services.AddScoped<JsonSqlConfigProvider>();
 
             return services;
         }
 
-        public static IConfigurationBuilder AddJsonSqlConfigProvider(this IConfigurationBuilder builder) 
+        public static IConfigurationBuilder AddJsonSqlConfigProvider(this IConfigurationBuilder builder, IServiceCollection services) 
         {
-            return builder.Add(new JsonSqlConfigSource());
+            var serviceProvider = services.BuildServiceProvider();
+            return builder.Add(new JsonSqlConfigSource(serviceProvider));
         }
     }
 }

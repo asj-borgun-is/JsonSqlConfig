@@ -13,13 +13,16 @@ namespace JsonSqlConfigDb.Service
     {
         private readonly JsonSqlContext _context;
         private readonly ILogger _logger;
+        private readonly JsonSqlConfigProvider _provider;
 
         public JsonSqlService(
             JsonSqlContext context,
-            ILogger<JsonSqlService> logger)
+            ILogger<JsonSqlService> logger,
+            JsonSqlConfigProvider provider)
         {
             _context = context;
             _logger = logger;
+            _provider = provider;
         }
 
         public DatabaseFacade Database { get => _context.Database; }
@@ -78,8 +81,7 @@ namespace JsonSqlConfigDb.Service
 
         public void LoadProvider()
         {
-            if (JsonSqlConfigProvider.Instance == null) throw new JsonSqlException($"Configuration provider {nameof(JsonSqlConfigProvider)} has not been added to this app");
-            JsonSqlConfigProvider.Instance.Load();
+            _provider.Load();
         }
 
         private string Get(JsonUnit unit)
