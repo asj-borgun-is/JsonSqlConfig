@@ -18,19 +18,22 @@ namespace JsonSqlConfig.Controllers
         private readonly IWebHostEnvironment _environment;
         private readonly IConfiguration _configuration;
         private readonly JsonSqlSettings _settings;
+        private readonly JsonSqlContext _context;
 
         public JsonSqlConfigController(
             ILogger<JsonSqlConfigController> logger,
             IJsonSqlService jsonService,
             IWebHostEnvironment environment,
             IConfiguration configuration,
-            IOptions<JsonSqlSettings> settings)
+            IOptions<JsonSqlSettings> settings,
+            JsonSqlContext context)
         {
             _logger = logger;
             _jsonService = jsonService;
             _environment = environment;
             _configuration = configuration;
             _settings = settings.Value;
+            _context = context;
         }
 
         [HttpPost("{group}")]
@@ -56,6 +59,7 @@ namespace JsonSqlConfig.Controllers
         public async Task<ActionResult<string>> GetConfig(string group)
         {
             _logger.LogDebug($"{nameof(GetConfig)} Task.CurrentId ({Task.CurrentId})");
+            var test = _context.JsonUnits.FirstOrDefault();
             return await WrapAction(() => GetConfigAction(group));
         }
 
