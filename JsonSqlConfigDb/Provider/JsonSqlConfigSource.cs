@@ -14,7 +14,9 @@ namespace JsonSqlConfigDb.Provider
 
         public IConfigurationProvider Build(IConfigurationBuilder builder)
         {
-            var serviceProvider = _services.BuildServiceProvider();
+            // "Sneek peek" at services, since this is still configuration time
+            var serviceProvider = _services.BuildServiceProvider(); 
+
             return serviceProvider.GetRequiredService<JsonSqlConfigProvider>();
         }
     }

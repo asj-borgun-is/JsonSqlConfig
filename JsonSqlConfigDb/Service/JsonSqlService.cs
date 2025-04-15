@@ -13,17 +13,17 @@ namespace JsonSqlConfigDb.Service
     {
         private readonly JsonSqlContext _context;
         private readonly ILogger _logger;
-        //private readonly JsonSqlConfigProvider _provider;
+        private readonly JsonSqlConfigProvider _provider;
 
         public JsonSqlService(
             JsonSqlContext context,
-            ILogger<JsonSqlService> logger
-            //,JsonSqlConfigProvider provider
+            ILogger<JsonSqlService> logger,
+            JsonSqlConfigProvider provider
             )
         {
             _context = context;
             _logger = logger;
-            //_provider = provider;
+            _provider = provider;
         }
 
         public DatabaseFacade Database { get => _context.Database; }
@@ -82,7 +82,7 @@ namespace JsonSqlConfigDb.Service
 
         public void LoadProvider()
         {
-            //_provider.Load();
+            _provider.ReLoad();
         }
 
         private string Get(JsonUnit unit)

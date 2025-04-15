@@ -4,6 +4,7 @@ using JsonSqlConfigDb.Settings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace JsonSqlConfigDb.Extension
 {
@@ -22,10 +23,9 @@ namespace JsonSqlConfigDb.Extension
                 .UseSqlServer(settings.GetConnectionString())
                 .EnableSensitiveDataLogging(settings.SensitiveLogging));
 
-            services.AddScoped<IJsonSqlService, JsonSqlService>();
+            services.TryAddScoped<IJsonSqlService, JsonSqlService>();
 
-            // Better research better
-            //services.AddScoped<JsonSqlConfigProvider>();
+            services.AddScoped<JsonSqlConfigProvider>();
 
             return services;
         }

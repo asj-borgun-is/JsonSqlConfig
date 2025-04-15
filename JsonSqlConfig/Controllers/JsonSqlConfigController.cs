@@ -141,7 +141,8 @@ namespace JsonSqlConfig.Controllers
 
         private IActionResult ReloadConfigAction()
         {
-            var propertyName = "Logging:LogLevel:Default";
+            // This is not quite working, a change to setting is not reflected back...
+            var propertyName = "Testing:MySetting";
             DebugProperty(propertyName, "before reload");
 
             _jsonService.LoadProvider();
